@@ -33,8 +33,6 @@ header p {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  max-height: 300px;
-  overflow-y: auto;
 }
 
 .group {
@@ -125,8 +123,6 @@ button:not(:disabled) {
   margin-top: 6px;
   padding-top: 6px;
   border-top: 1px dashed var(--line);
-  max-height: 150px;
-  overflow-y: auto;
 }
 
 .tab-row {
@@ -257,8 +253,6 @@ details select {
 
 #archives {
   margin-top: 4px;
-  max-height: 150px;
-  overflow-y: auto;
 }
 
 .archive-row {
@@ -310,8 +304,6 @@ footer button:disabled {
   border-radius: 8px;
   background: #f3f4f6;
   font-size: 12px;
-  max-height: 160px;
-  overflow-y: auto;
 }
 
 #result .ok { color: #047857; }

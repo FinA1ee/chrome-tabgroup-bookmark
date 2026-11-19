@@ -6,7 +6,7 @@
 - 短描述（建议）：把标签组中选中的页面归档成书签，支持日期文件夹和重新打开为标签组。
 - 分类：Productivity
 - 语言：中文（可后续补英文 `_locales`）
-- 版本：1.1.0
+- 版本：1.1.1
 - 官网/仓库：https://github.com/FinA1ee/chrome-tabgroup-bookmark
 - 隐私说明：https://github.com/FinA1ee/chrome-tabgroup-bookmark/blob/main/PRIVACY.md
 
