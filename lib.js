@@ -1,11 +1,11 @@
 // 纯函数集合：不依赖 chrome.* API，便于在 node 下直接跑测试。
 
-export const BOOKMARKS_BAR_ID = '1';
 export const UNTITLED_GROUP = '未命名组';
 export const DEFAULT_SETTINGS = {
   rootFolder: '需求归档',
+  destinationFolderId: null,
   datePrefix: true,
-  closeAfterSave: false,
+  closeAfterSave: true,
 };
 
 export function formatDate(date = new Date()) {
@@ -18,6 +18,11 @@ export function sanitizeFolderTitle(title) {
   return String(title ?? '')
     .replace(/[\\/:*?"<>|]/g, (ch) => ({ '\\': '＼', '/': '／', ':': '：', '*': '＊', '?': '？', '"': '＂', '<': '＜', '>': '＞', '|': '｜' })[ch])
     .trim();
+}
+
+// 归档目录是单层文件夹，不把用户输入当成书签路径解析。
+export function normalizeRootFolder(title) {
+  return sanitizeFolderTitle(title) || DEFAULT_SETTINGS.rootFolder;
 }
 
 export function buildFolderTitle(groupTitle, withDate, date = new Date()) {
@@ -36,5 +41,6 @@ export function pickTabUrl(tab) {
 export function summarize(results) {
   const added = results.reduce((sum, r) => sum + r.added, 0);
   const skipped = results.reduce((sum, r) => sum + r.skipped, 0);
-  return { added, skipped, groups: results.length };
+  const failed = results.reduce((sum, r) => sum + (r.failed || 0), 0);
+  return { added, skipped, failed, groups: results.length };
 }

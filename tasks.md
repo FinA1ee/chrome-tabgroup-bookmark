@@ -28,32 +28,40 @@
 
 依赖：T1 完成。
 
-- [ ] **T2.1** 新增 `background.js` service worker
-- [ ] **T2.2** manifest 注册 `background.service_worker`，保持 `type: "module"`
-- [ ] **T2.3** 把书签创建、文件夹复用、去重、关组逻辑移到后台
-- [ ] **T2.4** popup 改为发送 `{type:"archive", groupIds, settings}`，只负责展示结果
-- [ ] **T2.5** 后台串行队列，保证并发 archive 不重复建文件夹/书签
-- [ ] **T2.6** 根目录净化：单层文件夹、空值回退「需求归档」
-- [ ] **T2.7** 单条书签失败继续处理同组其他页面，返回 `failed`
-- [ ] **T2.8** 有失败时不自动关组；成功且用户开启时才关
-- [ ] **T2.9** popup 增加忙碌态，禁用所有收录按钮，展示 added/skipped/failed
-- [ ] **T2.10** 保持无网络请求、无 host 权限、无构建工具
+- [x] **T2.1** 新增 `background.js` service worker
+- [x] **T2.2** manifest 注册 `background.service_worker`，保持 `type: "module"`
+- [x] **T2.3** 把书签创建、文件夹复用、去重逻辑移到后台；archive 接收 `targets:[{groupId,tabIds}]`
+- [x] **T2.4** popup 每组展开页面复选框，只发送选中的 tabId；支持全选/清空
+- [x] **T2.5** 设置增加书签文件夹选择器：默认「书签栏 / 需求归档」，也可直接选具体文件夹
+- [x] **T2.6** 新增历史归档列表：列出目标目录下的日期文件夹
+- [x] **T2.7** 新增「以标签组打开」：读取书签、创建标签页、`chrome.tabs.group` 成组并恢复组名
+- [x] **T2.8** 后台串行队列，保证并发 archive 不重复建文件夹/书签
+- [x] **T2.9** 根目录净化：单层文件夹、空值回退「需求归档」；选中的目标文件夹不存在时明确报错
+- [x] **T2.10** 单条书签失败继续处理同组其他页面，返回 `failed`
+- [x] **T2.11** 归档成功后默认删除本次选中的页面；有失败时不删除；未选页面保留
+- [x] **T2.12** popup 增加忙碌态，禁用所有收录/选择/打开按钮，展示 added/skipped/failed
+- [x] **T2.13** 保持无网络请求、无 host 权限、无构建工具
 
 验收：
+- 只选部分页面时，只创建这些页面的书签；未选页面不被删除
+- 归档成功后默认删除已收录页面；失败时全部保留
+- 选择具体书签文件夹后，日期组文件夹直接落在该文件夹下
+- 历史归档可重新打开为标签组，组名等于文件夹名
 - 关闭 popup 后，已经开始的书签写入仍完成
 - 连续快速点击两次不产生重复书签
-- 失败组不被关闭
-- 现有 UI 中文文案和默认设置不变
+- 现有 UI 中文文案、默认「需求归档」和日期格式不变
 
 ## 阶段 3：自动化测试
 
 依赖：T2 完成。
 
-- [ ] **T3.1** 扩展 `test.mjs`：根目录净化、失败汇总、空组名
-- [ ] **T3.2** 新增 `test-background.mjs`，mock `chrome.bookmarks/tabs/tabGroups/runtime`
-- [ ] **T3.3** 覆盖书签栏定位、文件夹复用、URL 去重、部分失败、关组保护
-- [ ] **T3.4** `npm test` 同时运行两组测试
-- [ ] **T3.5** 语法检查 `node --check popup.js lib.js background.js`
+- [x] **T3.1** 扩展 `test.mjs`：根目录净化、失败汇总、空组名
+- [x] **T3.2** 新增 `test-background.mjs`，mock `chrome.bookmarks/tabs/tabGroups/runtime`
+- [x] **T3.3** 覆盖书签栏定位、目标文件夹、日期文件夹复用、URL 去重
+- [x] **T3.4** 覆盖只收录选中 tabId、部分失败、有失败不删页面、全成功才删除
+- [x] **T3.5** 覆盖历史归档打开为标签组（mock `tabs.create/tabs.group/tabGroups.update`）
+- [x] **T3.6** `npm test` 同时运行两组测试
+- [x] **T3.7** 语法检查 `node --check popup.js lib.js background.js`
 
 验收：`npm test` 全绿；不新增依赖。
 
@@ -61,10 +69,10 @@
 
 依赖：T2/T3 完成。
 
-- [ ] **T4.1** 生成 16/32/48/128 PNG 图标，加入 manifest 和 `action.default_icon`
-- [ ] **T4.2** 新增 `PRIVACY.md`：不收集/不上传、权限用途、数据保留边界
-- [ ] **T4.3** README 去公司化：移除内部域名/内部系统示例
-- [ ] **T4.4** 测试数据改用 `example.com`
+- [x] **T4.1** 生成 16/32/48/128 PNG 图标，加入 manifest 和 `action.default_icon`
+- [x] **T4.2** 新增 `PRIVACY.md`：不收集/不上传、权限用途、数据保留边界
+- [x] **T4.3** README 去公司化：移除内部域名/内部系统示例
+- [x] **T4.4** 测试数据改用 `example.com`
 - [ ] **T4.5** 准备商店文案：名称、短描述、详细描述、权限理由
 - [ ] **T4.6** 准备商店截图：组列表、收录结果、书签树
 - [ ] **T4.7** 用当前目录生成商店 ZIP（排除测试/仓库元数据）
@@ -76,11 +84,11 @@
 
 依赖：T4 基本完成；先确认 T0.1/T0.2。
 
-- [ ] **T5.1** `git init`，添加 `.gitignore`（`.DS_Store`、`*.zip`、`*.pem`、`.env`）
-- [ ] **T5.2** 初始提交（当前基线 + 设计文档）
-- [ ] **T5.3** 创建 GitHub 仓库并设置 `origin`
+- [x] **T5.1** `git init`，添加 `.gitignore`（`.DS_Store`、`*.zip`、`*.pem`、`.env`）
+- [x] **T5.2** 初始提交（当前基线 + 设计文档）
+- [x] **T5.3** 创建 GitHub 仓库并设置 `origin`
 - [ ] **T5.4** 添加 LICENSE 和 Issue 模板（可选）
-- [ ] **T5.5** 添加最小 CI：`npm test` + `node --check`
+- [x] **T5.5** 添加最小 CI：`npm test` + `node --check`
 - [ ] **T5.6** 打首个 tag / Release，附商店 ZIP
 - [ ] **T5.7** README 补 GitHub 仓库地址和隐私说明链接
 

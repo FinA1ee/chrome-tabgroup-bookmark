@@ -1,11 +1,27 @@
 {
   "manifest_version": 3,
   "name": "Tab 组收录",
-  "version": "1.0.0",
-  "description": "把当前窗口的标签组一键收录为书签文件夹，按「日期 + 组名」归档，方便需求结束后快速找回 PRD / Figma。",
+  "version": "1.1.0",
+  "description": "把当前窗口的标签组按选中页面收录为书签文件夹，按「日期 + 组名」归档，并可重新打开为标签组。",
   "permissions": ["tabs", "tabGroups", "bookmarks", "storage"],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
   "action": {
     "default_popup": "popup.html",
-    "default_title": "收录标签组到书签"
+    "default_title": "收录标签组到书签",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
   }
 }
