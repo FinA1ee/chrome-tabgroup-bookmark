@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Latest release](https://img.shields.io/github/v/release/FinA1ee/chrome-tabgroup-bookmark)](https://github.com/FinA1ee/chrome-tabgroup-bookmark/releases)
 
-[中文说明](README.zh-CN.md) · [Latest release](https://github.com/FinA1ee/chrome-tabgroup-bookmark/releases/tag/v1.1.9) · [Privacy](PRIVACY.md) · [MIT License](LICENSE)
+[中文说明](README.zh-CN.md) · [Latest release](https://github.com/FinA1ee/chrome-tabgroup-bookmark/releases/tag/v1.2.0) · [Privacy](PRIVACY.md) · [MIT License](LICENSE)
 
 ![Tab Group Archiver](docs/screenshots/hero.png)
 
@@ -141,7 +141,7 @@ GitHub Actions runs both tests and syntax checks on every push.
 
 ## Release
 
-- [v1.1.9](https://github.com/FinA1ee/chrome-tabgroup-bookmark/releases/tag/v1.1.9)
+- [v1.2.0](https://github.com/FinA1ee/chrome-tabgroup-bookmark/releases/tag/v1.2.0)
 - Store copy and screenshot checklist: [STORE.md](STORE.md)
 - Chrome Web Store submission is pending a developer account review.
 
