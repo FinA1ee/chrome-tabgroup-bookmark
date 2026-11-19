@@ -89,7 +89,7 @@
 - [x] **T5.3** 创建 GitHub 仓库并设置 `origin`
 - [x] **T5.4** 添加 LICENSE 和 Issue 模板（可选）
 - [x] **T5.5** 添加最小 CI：`npm test` + `node --check`
-- [ ] **T5.6** 打首个 tag / Release，附商店 ZIP
+- [x] **T5.6** 打首个 tag / Release，附商店 ZIP
 - [x] **T5.7** README 补 GitHub 仓库地址和隐私说明链接
 
 验收：新克隆仓库后无需安装依赖即可 `npm test`；Release 产物可安装。
