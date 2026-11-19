@@ -1,0 +1,41 @@
+popup.css
+  s_46331e5435f41e::t_c10b1496cec0e7 134-140
+test.mjs
+  s_46331e5435f41e::t_d7014da787778d 4
+  s_46331e5435f41e::t_a5f791999a8db6 26
+README.md
+  s_46331e5435f41e::t_7c19840b40c4c6 29
+  s_46331e5435f41e::t_7b70a33ee842eb 23
+background.js
+  s_46331e5435f41e::t_2d9fad1ac9352e 281-291,293-306,308-309,318-338
+  s_46331e5435f41e::t_7c58db36ce6174 170-173,177-196
+test-background.mjs
+  s_46331e5435f41e::t_cee2ec6bf8cd9a 46-52
+  s_46331e5435f41e::t_b5b0f9c03682ec 92-98,104,106-107
+  s_46331e5435f41e::t_083cc13ae1a708 133
+  s_46331e5435f41e::t_086eba5d54ca6b 167,169-174
+README.zh-CN.md
+  s_46331e5435f41e::t_6df0337199ab82 24
+  s_46331e5435f41e::t_2db40b5ea81f8c 17
+popup.js
+  s_46331e5435f41e::t_069bf92fa791cf 187
+  s_46331e5435f41e::t_98f86c3fda754d 328
+CHANGELOG.md
+  s_46331e5435f41e::t_9475ba07df820c 6-7
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.52-trip",
+  "base_commit_sha": "814b7f67fe9ec80af4af71b0478cbcd6d487c474",
+  "prompts": {},
+  "sessions": {
+    "s_46331e5435f41e": {
+      "agent_id": {
+        "tool": "chengxiaobang",
+        "id": "s_4tns5b9ih3f4",
+        "model": "DeepSeek-V4.1-Flash"
+      },
+      "human_author": "FinA1ee <39509457+FinA1ee@users.noreply.github.com>"
+    }
+  }
+}
