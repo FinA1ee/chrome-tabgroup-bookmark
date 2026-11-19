@@ -77,10 +77,15 @@ node --check background.js
 
 ## 发布
 
-- 扩展目录就是发布目录，无需构建；商店上传时可压测本目录，排除测试文件和仓库元数据。
+- 扩展目录就是发布目录，无需构建；商店上传时可压缩本目录，排除测试文件和仓库元数据。
 - 设计说明：[design.md](design.md)
 - 任务拆解：[tasks.md](tasks.md)
 - 隐私说明：[PRIVACY.md](PRIVACY.md)
+- 商店材料：[STORE.md](STORE.md)
+
+## License
+
+[MIT](LICENSE)
 
 ## 已知边界
 

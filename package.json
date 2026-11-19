@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node test.mjs && node test-background.mjs"
+    "test": "node test.mjs && node test-background.mjs",
+    "package": "bash scripts/package.sh"
   }
 }
