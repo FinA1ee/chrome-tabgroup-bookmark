@@ -4,6 +4,7 @@ import {
   isBookmarkableUrl,
   normalizeRootFolder,
   pickTabUrl,
+  sanitizeFolderTitle,
 } from './lib.js';
 import { defaultRootFolder, normalizeLanguage, t, untitledGroup } from './i18n.js';
 
@@ -61,6 +62,7 @@ function normalizeTargets(raw) {
       tabIds: Array.isArray(target?.tabIds)
         ? [...new Set(target.tabIds.filter((id) => Number.isInteger(id) && id > 0))]
         : [],
+      folderTitle: typeof target?.folderTitle === 'string' ? target.folderTitle : '',
     }))
     .filter((target) => Number.isInteger(target.groupId) && target.groupId > 0 && target.tabIds.length > 0);
 }
@@ -111,7 +113,8 @@ async function archiveGroup(target, parentId, settings) {
   const selected = new Set(target.tabIds);
   const tabs = (await chrome.tabs.query({ groupId: target.groupId }))
     .filter((tab) => selected.has(tab.id));
-  const folderTitle = buildFolderTitle(group.title, settings.datePrefix, new Date(), untitledGroup(settings.language));
+  const customTitle = sanitizeFolderTitle(target.folderTitle).slice(0, 120);
+  const folderTitle = customTitle || buildFolderTitle(group.title, settings.datePrefix, new Date(), untitledGroup(settings.language));
   const folder = await ensureFolder(parentId, folderTitle);
   const folderId = folder.id;
   const existing = new Set(

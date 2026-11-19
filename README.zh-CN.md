@@ -17,6 +17,7 @@
 - 展开标签组，勾选需要归档的页面，只收录选中的部分
 - 默认归档到 `书签栏 / 需求归档 / YYYY-MM-DD 组名 /`
 - 也可以选择书签栏下的任意具体文件夹作为归档父目录
+- 每组可编辑归档文件夹名，并实时预览最终路径；留空回退自动名称
 - 同名文件夹复用、同 URL 去重，重复点击安全
 - 归档成功后默认删除本次已收录的页面；未选页面保留
 - 有书签写入失败时不删除任何页面
@@ -84,7 +85,7 @@ node --check background.js
 ## 发布
 
 - 扩展目录就是发布目录，无需构建；商店上传时可压缩本目录，排除测试文件和仓库元数据。
-- 最新 Release：[v1.1.7](https://github.com/FinA1ee/chrome-tabgroup-bookmark/releases/tag/v1.1.7)
+- 最新 Release：[v1.1.8](https://github.com/FinA1ee/chrome-tabgroup-bookmark/releases/tag/v1.1.8)
 - 设计说明：[design.md](design.md)
 - 任务拆解：[tasks.md](tasks.md)
 - 隐私说明：[PRIVACY.md](PRIVACY.md)

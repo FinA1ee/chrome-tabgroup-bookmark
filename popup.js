@@ -1,4 +1,5 @@
 import {
+  buildFolderTitle,
   defaultSettingsFor,
   isBookmarkableUrl,
   normalizeRootFolder,
@@ -43,6 +44,8 @@ let settings = defaultSettingsFor('en');
 let groups = [];
 let destinations = [];
 let selectedByGroup = new Map();
+let folderDrafts = new Map();
+let folderEdited = new Set();
 let busy = false;
 let language = 'en';
 
@@ -118,6 +121,7 @@ async function persistSettings() {
     language,
   };
   els.rootFolder.value = settings.rootFolder;
+  refreshFolderNames();
   if (els.destination.options[0]) {
     els.destination.options[0].text = t(language, 'defaultDestination', { folder: settings.rootFolder });
   }
@@ -165,6 +169,18 @@ async function loadGroups() {
 async function render() {
   groups = await loadGroups();
   selectedByGroup = new Map();
+
+  const groupIds = new Set(groups.map((group) => group.id));
+  for (const id of folderDrafts.keys()) {
+    if (!groupIds.has(id)) {
+      folderDrafts.delete(id);
+      folderEdited.delete(id);
+    }
+  }
+  for (const group of groups) {
+    if (!folderEdited.has(group.id)) folderDrafts.set(group.id, defaultFolderTitle(group));
+  }
+
   els.list.textContent = '';
 
   for (const group of groups) {
@@ -182,6 +198,39 @@ async function render() {
   }
   updateActionLabels();
   setBusy(busy);
+}
+
+function defaultFolderTitle(group) {
+  return buildFolderTitle(group.title, settings.datePrefix, new Date(), untitledGroup(language));
+}
+
+function destinationBasePath() {
+  const selected = destinations.find((folder) => folder.id === settings.destinationFolderId);
+  return selected?.path || `${t(language, 'bookmarksBar')} ${settings.rootFolder}`;
+}
+
+function pathPreviewText(group) {
+  const input = els.list.querySelector(`[data-folder-input="${group.id}"]`);
+  const folder = input?.value.trim() || defaultFolderTitle(group);
+  return t(language, 'pathPreview', { path: destinationBasePath(), folder });
+}
+
+function refreshFolderNames() {
+  for (const group of groups) {
+    if (folderEdited.has(group.id)) continue;
+    const value = defaultFolderTitle(group);
+    folderDrafts.set(group.id, value);
+    const input = els.list.querySelector(`[data-folder-input="${group.id}"]`);
+    if (input) input.value = value;
+  }
+  refreshPathPreviews();
+}
+
+function refreshPathPreviews() {
+  for (const group of groups) {
+    const preview = els.list.querySelector(`[data-path-preview="${group.id}"]`);
+    if (preview) preview.textContent = pathPreviewText(group);
+  }
 }
 
 function groupRow(group) {
@@ -211,7 +260,7 @@ function groupRow(group) {
   saveButton.title = t(language, 'archiveTitle');
   saveButton.addEventListener('click', () => {
     const tabIds = [...(selectedByGroup.get(group.id) || [])];
-    void saveTargets([{ groupId: group.id, tabIds }]);
+    void saveTargets([{ groupId: group.id, tabIds, folderTitle: folderDrafts.get(group.id) || '' }]);
   });
 
   head.append(dot, name, count, saveButton);
@@ -242,7 +291,34 @@ function groupRow(group) {
   clearAll.className = 'link-button';
   clearAll.textContent = t(language, 'clear');
   tools.append(selectAll, clearAll);
-  tabsBox.append(tools);
+
+  const folderRow = document.createElement('label');
+  folderRow.className = 'folder-row';
+  const folderLabel = document.createElement('span');
+  folderLabel.textContent = t(language, 'folderName');
+  const folderInput = document.createElement('input');
+  folderInput.type = 'text';
+  folderInput.className = 'folder-input';
+  folderInput.dataset.folderInput = String(group.id);
+  folderInput.value = folderDrafts.get(group.id) || defaultFolderTitle(group);
+  folderInput.placeholder = t(language, 'folderNamePlaceholder');
+  folderInput.spellcheck = false;
+  folderInput.addEventListener('input', () => {
+    folderDrafts.set(group.id, folderInput.value);
+    folderEdited.add(group.id);
+    refreshPathPreviews();
+  });
+  folderRow.append(folderLabel, folderInput);
+
+  const pathPreview = document.createElement('div');
+  pathPreview.className = 'path-preview';
+  pathPreview.dataset.pathPreview = String(group.id);
+  pathPreview.textContent = t(language, 'pathPreview', {
+    path: destinationBasePath(),
+    folder: folderInput.value.trim() || defaultFolderTitle(group),
+  });
+
+  tabsBox.append(folderRow, pathPreview, tools);
   head.append(toggle);
 
   for (const tab of group.tabs) {
@@ -301,7 +377,11 @@ function groupRow(group) {
 
 function targetsFromGroups() {
   return groups
-    .map((group) => ({ groupId: group.id, tabIds: [...(selectedByGroup.get(group.id) || [])] }))
+    .map((group) => ({
+      groupId: group.id,
+      tabIds: [...(selectedByGroup.get(group.id) || [])],
+      folderTitle: folderDrafts.get(group.id) || '',
+    }))
     .filter((target) => target.tabIds.length > 0);
 }
 

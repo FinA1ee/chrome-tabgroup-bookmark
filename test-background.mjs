@@ -142,12 +142,12 @@ assert.equal(failed.results[0].closed, false);
 
 const destination = await call({
   type: 'archive',
-  targets: [{ groupId: 9, tabIds: [5] }],
+  targets: [{ groupId: 9, tabIds: [5], folderTitle: 'Custom archive' }],
   settings: { rootFolder: '需求归档', destinationFolderId: 'dest', closeAfterSave: false },
 });
 assert.equal(destination.ok, true);
-assert.equal(destination.results[0].folderTitle, `${today} 目标组`);
-assert.ok(state.folders.some((folder) => folder.parentId === 'dest' && folder.title === `${today} 目标组`));
+assert.equal(destination.results[0].folderTitle, 'Custom archive');
+assert.ok(state.folders.some((folder) => folder.parentId === 'dest' && folder.title === 'Custom archive'));
 assert.ok(!state.removed.includes(5));
 
 const opened = await call({ type: 'openArchive', folderId: 'folder-open' });
