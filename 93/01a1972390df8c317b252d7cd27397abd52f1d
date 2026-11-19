@@ -1,0 +1,28 @@
+test.mjs
+  s_46331e5435f41e::t_804485de7260c1 13
+  s_46331e5435f41e::t_5d62c04042be84 27-28
+i18n.js
+  s_46331e5435f41e::t_d2ea0635dc1553 124
+README.md
+  s_46331e5435f41e::t_d257279e7964c1 32
+popup.js
+  s_46331e5435f41e::t_713252a928271b 53
+README.zh-CN.md
+  s_46331e5435f41e::t_8f6835759f7323 7
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.52-trip",
+  "base_commit_sha": "9301a1972390df8c317b252d7cd27397abd52f1d",
+  "prompts": {},
+  "sessions": {
+    "s_46331e5435f41e": {
+      "agent_id": {
+        "tool": "chengxiaobang",
+        "id": "s_4tns5b9ih3f4",
+        "model": "DeepSeek-V4.1-Flash"
+      },
+      "human_author": "FinA1ee <39509457+FinA1ee@users.noreply.github.com>"
+    }
+  }
+}
