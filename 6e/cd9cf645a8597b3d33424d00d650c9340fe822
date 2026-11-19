@@ -1,0 +1,28 @@
+design.md
+  s_46331e5435f41e::t_f3b1fd57ca4191 311,313-318,320
+STORE.md
+  s_46331e5435f41e::t_af1d9f06009d8d 1-68
+LICENSE
+  s_46331e5435f41e::t_3151cdd0b17031 1-21
+scripts/package.sh
+  s_46331e5435f41e::t_f2ed876ecb7d1c 1-23
+README.md
+  s_46331e5435f41e::t_9ba2ae3837a079 80
+  s_46331e5435f41e::t_9532f5314537f1 84-88
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.52-trip",
+  "base_commit_sha": "6ecd9cf645a8597b3d33424d00d650c9340fe822",
+  "prompts": {},
+  "sessions": {
+    "s_46331e5435f41e": {
+      "agent_id": {
+        "tool": "chengxiaobang",
+        "id": "s_4tns5b9ih3f4",
+        "model": "DeepSeek-V4.1-Flash"
+      },
+      "human_author": "FinA1ee <39509457+FinA1ee@users.noreply.github.com>"
+    }
+  }
+}
