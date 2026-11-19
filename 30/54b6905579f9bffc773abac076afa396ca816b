@@ -1,0 +1,32 @@
+popup.html
+  s_46331e5435f41e::t_ca996c09812d10 19,23,25
+popup.js
+  s_46331e5435f41e::t_d3fff4f6f20302 173,183,206-207
+  s_46331e5435f41e::t_755b0501362f7c 184-185,192-193,208
+  s_46331e5435f41e::t_4e06d59600a381 277
+STORE.md
+  s_46331e5435f41e::t_c6cc9cf02d4eb4 45,47-48
+README.md
+  s_46331e5435f41e::t_d33f754dc1fdf9 85
+popup.css
+  s_46331e5435f41e::t_5cef4e23bb6ab0 89-92,94-95
+  s_46331e5435f41e::t_11450eb6015a26 49,53-54
+  s_46331e5435f41e::t_4f5a2de22c1122 187-197,207-208,216-226
+  s_46331e5435f41e::t_a23d25b787cd9d 117,119-121
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.52-trip",
+  "base_commit_sha": "3054b6905579f9bffc773abac076afa396ca816b",
+  "prompts": {},
+  "sessions": {
+    "s_46331e5435f41e": {
+      "agent_id": {
+        "tool": "chengxiaobang",
+        "id": "s_4tns5b9ih3f4",
+        "model": "DeepSeek-V4.1-Flash"
+      },
+      "human_author": "FinA1ee <39509457+FinA1ee@users.noreply.github.com>"
+    }
+  }
+}
