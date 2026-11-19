@@ -1,10 +1,18 @@
 import {
-  DEFAULT_SETTINGS,
+  defaultSettingsFor,
   isBookmarkableUrl,
   normalizeRootFolder,
   pickTabUrl,
   summarize,
 } from './lib.js';
+import {
+  applyStaticI18n,
+  defaultRootFolder,
+  detectLanguage,
+  normalizeLanguage,
+  t,
+  untitledGroup,
+} from './i18n.js';
 
 const COLOR_HEX = {
   grey: '#9aa0a6',
@@ -29,24 +37,29 @@ const els = {
   destination: document.getElementById('destination'),
   archives: document.getElementById('archives'),
   refreshArchives: document.getElementById('refreshArchives'),
+  languageSwitch: document.getElementById('languageSwitch'),
 };
 
-let settings = { ...DEFAULT_SETTINGS };
+let settings = defaultSettingsFor('en');
 let groups = [];
 let destinations = [];
 let selectedByGroup = new Map();
 let busy = false;
+let language = 'en';
 
 init();
 
 async function init() {
   const stored = (await chrome.storage.local.get('settings')).settings;
-  settings = { ...DEFAULT_SETTINGS, ...stored };
-  settings.rootFolder = normalizeRootFolder(settings.rootFolder);
+  language = normalizeLanguage(stored?.language, detectLanguage());
+  settings = { ...defaultSettingsFor(language), ...(stored || {}), language };
+  if (!stored?.rootFolder) settings.rootFolder = defaultRootFolder(language);
+  settings.rootFolder = normalizeRootFolder(settings.rootFolder, defaultRootFolder(language));
   settings.destinationFolderId = typeof settings.destinationFolderId === 'string' && settings.destinationFolderId
     ? settings.destinationFolderId
     : null;
 
+  applyStaticI18n(language);
   els.datePrefix.checked = settings.datePrefix;
   els.closeAfterSave.checked = settings.closeAfterSave;
   els.rootFolder.value = settings.rootFolder;
@@ -57,16 +70,41 @@ async function init() {
   els.destination.addEventListener('change', persistSettings);
   els.refreshArchives.addEventListener('click', () => void loadArchives());
   els.saveAll.addEventListener('click', () => saveTargets(targetsFromGroups()));
+  els.languageSwitch.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-lang]');
+    if (button) void changeLanguage(button.dataset.lang);
+  });
 
   await loadDestinations();
   await render();
   await loadArchives();
 }
 
+async function changeLanguage(next) {
+  const normalized = normalizeLanguage(next, language);
+  if (busy || normalized === language) return;
+
+  const oldDefault = defaultRootFolder(language);
+  const nextDefault = defaultRootFolder(normalized);
+  if (settings.rootFolder === oldDefault) settings.rootFolder = nextDefault;
+
+  language = normalized;
+  settings.language = normalized;
+  settings.rootFolder = normalizeRootFolder(settings.rootFolder, nextDefault);
+  applyStaticI18n(language);
+  els.rootFolder.value = settings.rootFolder;
+  if (els.destination.options[0]) {
+    els.destination.options[0].text = t(language, 'defaultDestination', { folder: settings.rootFolder });
+  }
+  await chrome.storage.local.set({ settings });
+  await render();
+  await loadArchives();
+}
+
 async function send(message) {
   const reply = await chrome.runtime.sendMessage(message);
-  if (!reply) throw new Error('后台没有返回结果');
-  if (reply.ok === false) throw new Error(reply.error || '操作失败');
+  if (!reply) throw new Error(t(language, 'noReply'));
+  if (reply.ok === false) throw new Error(reply.error || t(language, 'operationFailed', { message: '' }));
   return reply;
 }
 
@@ -76,12 +114,13 @@ async function persistSettings() {
     ...settings,
     datePrefix: els.datePrefix.checked,
     closeAfterSave: els.closeAfterSave.checked,
-    rootFolder: normalizeRootFolder(els.rootFolder.value),
+    rootFolder: normalizeRootFolder(els.rootFolder.value, defaultRootFolder(language)),
     destinationFolderId,
+    language,
   };
   els.rootFolder.value = settings.rootFolder;
   if (els.destination.options[0]) {
-    els.destination.options[0].text = `默认：书签栏 / ${settings.rootFolder}`;
+    els.destination.options[0].text = t(language, 'defaultDestination', { folder: settings.rootFolder });
   }
   await chrome.storage.local.set({ settings });
   await loadArchives();
@@ -96,7 +135,7 @@ async function loadDestinations() {
   }
 
   els.destination.textContent = '';
-  els.destination.append(new Option(`默认：书签栏 / ${settings.rootFolder}`, ''));
+  els.destination.append(new Option(t(language, 'defaultDestination', { folder: settings.rootFolder }), ''));
   for (const folder of destinations) {
     const option = new Option(`${'　'.repeat(folder.depth)}${folder.title}`, folder.id);
     option.title = folder.path;
@@ -137,9 +176,9 @@ async function render() {
   }
 
   if (!groups.length) {
-    els.hint.textContent = '当前窗口没有标签组';
+    els.hint.textContent = t(language, 'noGroups');
   } else {
-    els.hint.textContent = `当前窗口有 ${groups.length} 个标签组`;
+    els.hint.textContent = t(language, groups.length === 1 ? 'groupCountOne' : 'groupCount', { count: groups.length });
     for (const group of groups) els.list.append(groupRow(group));
   }
   updateActionLabels();
@@ -159,18 +198,18 @@ function groupRow(group) {
 
   const name = document.createElement('span');
   name.className = 'name';
-  name.textContent = group.title || '未命名组';
-  name.title = group.title || '未命名组';
+  name.textContent = group.title || untitledGroup(language);
+  name.title = group.title || untitledGroup(language);
 
   const count = document.createElement('span');
   count.className = 'count';
-  count.textContent = `${group.tabs.length} 个页面`;
+  count.textContent = t(language, group.tabs.length === 1 ? 'pageCountOne' : 'pageCount', { count: group.tabs.length });
 
   const saveButton = document.createElement('button');
   saveButton.type = 'button';
   saveButton.className = 'save-group';
   saveButton.dataset.groupButton = String(group.id);
-  saveButton.title = '只收录当前选中的页面';
+  saveButton.title = t(language, 'archiveTitle');
   saveButton.addEventListener('click', () => {
     const tabIds = [...(selectedByGroup.get(group.id) || [])];
     void saveTargets([{ groupId: group.id, tabIds }]);
@@ -181,16 +220,16 @@ function groupRow(group) {
   const toggle = document.createElement('button');
   toggle.type = 'button';
   toggle.className = 'link-button group-toggle';
-  toggle.textContent = '选择';
-  toggle.title = '展开页面选择';
+  toggle.textContent = t(language, 'select');
+  toggle.title = t(language, 'selectTitle');
   const tabsBox = document.createElement('div');
   tabsBox.className = 'tabs';
   tabsBox.hidden = true;
 
   toggle.addEventListener('click', () => {
     tabsBox.hidden = !tabsBox.hidden;
-    toggle.textContent = tabsBox.hidden ? '选择' : '收起';
-    toggle.title = tabsBox.hidden ? '展开页面选择' : '收起页面选择';
+    toggle.textContent = t(language, tabsBox.hidden ? 'select' : 'collapse');
+    toggle.title = t(language, tabsBox.hidden ? 'selectTitle' : 'collapseTitle');
   });
 
   const tools = document.createElement('div');
@@ -198,11 +237,11 @@ function groupRow(group) {
   const selectAll = document.createElement('button');
   selectAll.type = 'button';
   selectAll.className = 'link-button';
-  selectAll.textContent = '全选';
+  selectAll.textContent = t(language, 'selectAll');
   const clearAll = document.createElement('button');
   clearAll.type = 'button';
   clearAll.className = 'link-button';
-  clearAll.textContent = '清空';
+  clearAll.textContent = t(language, 'clear');
   tools.append(selectAll, clearAll);
   tabsBox.append(tools);
   head.append(toggle);
@@ -226,11 +265,11 @@ function groupRow(group) {
     });
     const text = document.createElement('span');
     text.className = 'tab-title';
-    text.textContent = tab.title || url || '未命名页面';
+    text.textContent = tab.title || url || t(language, 'untitledPage');
     text.title = url || text.textContent;
     const badge = document.createElement('span');
     badge.className = 'tab-state';
-    badge.textContent = supported ? '' : '不可收藏';
+    badge.textContent = supported ? '' : t(language, 'unsupported');
     label.append(checkbox, text, badge);
     tabsBox.append(label);
   }
@@ -274,12 +313,14 @@ function updateActionLabels() {
     total += count;
     const button = els.list.querySelector(`[data-group-button="${group.id}"]`);
     if (button) {
-      button.textContent = count ? `收录 ${count}` : '收录';
+      button.textContent = t(language, count ? 'archiveCount' : 'archive', { count });
       button.disabled = busy || count === 0;
     }
   }
   els.saveAll.disabled = busy || total === 0;
-  els.saveAll.textContent = total ? `收录全部选中（${total} 个页面）` : '收录全部选中';
+  els.saveAll.textContent = total
+    ? t(language, 'archiveAllCount', { count: total })
+    : t(language, 'archiveAll');
 }
 
 function setBusy(value) {
@@ -287,19 +328,21 @@ function setBusy(value) {
   for (const el of document.querySelectorAll('button, input, select')) {
     el.disabled = value || (el.matches?.('input[data-unsupported="1"]'));
   }
-  if (!value) {
-    updateActionLabels();
-    for (const row of els.list.querySelectorAll('.group')) {
-      const save = row.querySelector('.save-group');
-      if (save) save.disabled = !row.querySelector('input[data-tab-id]:checked');
-    }
+  if (value) {
+    els.saveAll.textContent = t(language, 'saving');
+    return;
+  }
+  updateActionLabels();
+  for (const row of els.list.querySelectorAll('.group')) {
+    const save = row.querySelector('.save-group');
+    if (save) save.disabled = !row.querySelector('input[data-tab-id]:checked');
   }
 }
 
 async function saveTargets(targets) {
   if (busy) return;
   if (!targets.length) {
-    showError('请先选择至少一个可收藏页面');
+    showError(t(language, 'needSelection'));
     return;
   }
 
@@ -325,7 +368,7 @@ async function loadArchives() {
     if (!folders.length) {
       const empty = document.createElement('div');
       empty.className = 'empty';
-      empty.textContent = '暂无归档';
+      empty.textContent = t(language, 'emptyArchives');
       els.archives.append(empty);
       return;
     }
@@ -338,11 +381,11 @@ async function loadArchives() {
       name.title = folder.title;
       const count = document.createElement('span');
       count.className = 'count';
-      count.textContent = `${folder.count} 个页面`;
+      count.textContent = t(language, folder.count === 1 ? 'pageCountOne' : 'pageCount', { count: folder.count });
       const open = document.createElement('button');
       open.type = 'button';
       open.className = 'link-button';
-      open.textContent = '以标签组打开';
+      open.textContent = t(language, 'openAsGroup');
       open.addEventListener('click', () => void openArchive(folder.id));
       row.append(name, count, open);
       els.archives.append(row);
@@ -359,11 +402,11 @@ async function openArchive(folderId) {
   if (busy) return;
   setBusy(true);
   try {
-    const reply = await send({ type: 'openArchive', folderId });
+    const reply = await send({ type: 'openArchive', folderId, language });
     await render();
     await loadArchives();
     els.result.hidden = false;
-    els.result.textContent = `已打开「${reply.title}」为标签组，共 ${reply.opened} 个页面`;
+    els.result.textContent = t(language, 'openResult', { title: reply.title, count: reply.opened });
   } catch (error) {
     showError(error);
   } finally {
@@ -377,27 +420,32 @@ function showResults(results) {
 
   if (!results.length) return;
   const { added, skipped, failed } = summarize(results);
+  const separator = language === 'zh' ? '，' : ', ';
 
   const summary = document.createElement('div');
   summary.className = failed ? 'warn' : added ? 'ok' : 'warn';
-  const parts = [`已收录 ${added} 个书签`];
-  if (failed) parts.push(`失败 ${failed} 个`);
-  if (skipped) parts.push(`跳过 ${skipped} 个（重复或不可收藏页面）`);
-  summary.textContent = parts.join('，');
+  const parts = [t(language, added === 1 ? 'addedOne' : 'added', { count: added })];
+  if (failed) parts.push(t(language, 'failed', { count: failed }));
+  if (skipped) parts.push(t(language, 'skipped', { count: skipped }));
+  summary.textContent = parts.join(separator);
   els.result.append(summary);
 
   for (const item of results) {
     const line = document.createElement('div');
-    const details = [`新增 ${item.added}`, `跳过 ${item.skipped}`];
-    if (item.failed) details.push(`失败 ${item.failed}`);
-    if (item.closed) details.push('已删除已收录页面');
-    if (item.error) details.push(`错误：${item.error}`);
-    line.textContent = `· ${item.folderTitle || `组 ${item.groupId}`}：${details.join('，')}`;
+    const details = [
+      t(language, 'addedShort', { count: item.added }),
+      t(language, 'skippedShort', { count: item.skipped }),
+    ];
+    if (item.failed) details.push(t(language, 'failedShort', { count: item.failed }));
+    if (item.closed) details.push(t(language, 'deleted'));
+    if (item.error) details.push(`${t(language, 'errorLabel')}: ${item.error}`);
+    const title = item.folderTitle || t(language, 'groupFallback', { id: item.groupId });
+    line.textContent = `· ${title}: ${details.join(separator)}`;
     if (item.folderId) {
       const open = document.createElement('button');
       open.type = 'button';
       open.className = 'link-button';
-      open.textContent = '以标签组打开';
+      open.textContent = t(language, 'openAsGroup');
       open.addEventListener('click', () => void openArchive(item.folderId));
       line.append(' ', open);
     }
@@ -407,5 +455,5 @@ function showResults(results) {
 
 function showError(error) {
   els.result.hidden = false;
-  els.result.textContent = `操作失败：${error?.message || error}`;
+  els.result.textContent = t(language, 'operationFailed', { message: error?.message || error });
 }

@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Tab 组收录",
-  "version": "1.1.4",
-  "description": "把当前窗口的标签组按选中页面收录为书签文件夹，按「日期 + 组名」归档，并可重新打开为标签组。",
+  "name": "__MSG_extensionName__",
+  "version": "1.1.5",
+  "description": "__MSG_extensionDescription__",
   "permissions": [
     "tabs",
     "tabGroups",
@@ -21,12 +21,13 @@
   },
   "action": {
     "default_popup": "popup.html",
-    "default_title": "收录标签组到书签",
+    "default_title": "__MSG_actionTitle__",
     "default_icon": {
       "16": "icons/icon16.png",
       "32": "icons/icon32.png",
       "48": "icons/icon48.png",
       "128": "icons/icon128.png"
     }
-  }
+  },
+  "default_locale": "en"
 }

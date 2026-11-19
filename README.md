@@ -2,7 +2,7 @@
 
 **Archive selected tabs from Chrome tab groups into dated bookmark folders — then reopen an archive as a tab group when you need it again.**
 
-[中文说明](README.zh-CN.md) · [Latest release](https://github.com/FinA1ee/chrome-tabgroup-bookmark/releases/tag/v1.1.4) · [Privacy](PRIVACY.md) · [MIT License](LICENSE)
+[中文说明](README.zh-CN.md) · [Latest release](https://github.com/FinA1ee/chrome-tabgroup-bookmark/releases/tag/v1.1.5) · [Privacy](PRIVACY.md) · [MIT License](LICENSE)
 
 ![Tab Group Archiver](docs/screenshots/hero.png)
 
@@ -22,13 +22,14 @@ The extension is local-only: no account, no backend, no analytics, no network re
 - **Safe to repeat.** Existing folders are reused and duplicate URLs are skipped.
 - **Delete after archiving.** On by default: only successfully archived, selected tabs are closed. Unselected tabs and failed writes are kept.
 - **Reopen an archive as a tab group.** The history list can recreate the pages and group them under the original folder name.
+- **English and Chinese UI.** Switch between 中 and EN in the popup header; the choice is saved locally.
 - **Popup-safe writes.** Bookmark writes run in the MV3 service worker, so closing the popup does not stop an archive already in progress.
 
 ![Select pages to archive](docs/screenshots/selection.png)
 
 ## Install
 
-The UI is currently in Chinese; English localization is planned.
+The popup UI supports English and Simplified Chinese; use the `中 / EN` switch in the header. The screenshots use English.
 
 1. Download the latest ZIP from [Releases](https://github.com/FinA1ee/chrome-tabgroup-bookmark/releases).
 2. Unzip it anywhere.
@@ -135,7 +136,7 @@ GitHub Actions runs both tests and syntax checks on every push.
 
 ## Release
 
-- [v1.1.4](https://github.com/FinA1ee/chrome-tabgroup-bookmark/releases/tag/v1.1.4)
+- [v1.1.5](https://github.com/FinA1ee/chrome-tabgroup-bookmark/releases/tag/v1.1.5)
 - Store copy and screenshot checklist: [STORE.md](STORE.md)
 - Chrome Web Store submission is pending a developer account review.
 

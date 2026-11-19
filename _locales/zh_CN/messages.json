@@ -1,0 +1,5 @@
+{
+  "extensionName": { "message": "Tab 组收录" },
+  "extensionDescription": { "message": "把当前窗口的标签组按选中页面收录为书签文件夹，按「日期 + 组名」归档，并可重新打开为标签组。" },
+  "actionTitle": { "message": "收录标签组到书签" }
+}

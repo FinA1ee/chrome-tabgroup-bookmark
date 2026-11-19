@@ -5,6 +5,7 @@ import {
   normalizeRootFolder,
   pickTabUrl,
 } from './lib.js';
+import { defaultRootFolder, normalizeLanguage, t, untitledGroup } from './i18n.js';
 
 // 收录是写操作，放在 service worker 里执行；弹窗失焦关闭不会中断已经开始的写入。
 let queue = Promise.resolve();
@@ -36,7 +37,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 
   if (message?.type === 'openArchive') {
-    openArchive(message.folderId)
+    openArchive(message.folderId, normalizeLanguage(message.language, 'en'))
       .then((result) => sendResponse({ ok: true, ...result }))
       .catch((error) => sendResponse({ ok: false, error: textOf(error) }));
     return true;
@@ -65,10 +66,12 @@ function normalizeTargets(raw) {
 }
 
 function normalizeSettings(raw) {
+  const language = normalizeLanguage(raw?.language, 'en');
   return {
     ...DEFAULT_SETTINGS,
     ...(raw && typeof raw === 'object' ? raw : {}),
-    rootFolder: normalizeRootFolder(raw?.rootFolder),
+    language,
+    rootFolder: normalizeRootFolder(raw?.rootFolder, defaultRootFolder(language)),
     destinationFolderId: typeof raw?.destinationFolderId === 'string' && raw.destinationFolderId
       ? raw.destinationFolderId
       : null,
@@ -78,7 +81,7 @@ function normalizeSettings(raw) {
 }
 
 async function archiveGroups(targets, settings) {
-  if (!targets.length) throw new Error('没有选择要收录的页面');
+  if (!targets.length) throw new Error(t(settings.language, 'errorNoTargets'));
 
   const parent = await resolveArchiveParent(settings, true);
   const results = [];
@@ -108,7 +111,7 @@ async function archiveGroup(target, parentId, settings) {
   const selected = new Set(target.tabIds);
   const tabs = (await chrome.tabs.query({ groupId: target.groupId }))
     .filter((tab) => selected.has(tab.id));
-  const folderTitle = buildFolderTitle(group.title, settings.datePrefix);
+  const folderTitle = buildFolderTitle(group.title, settings.datePrefix, new Date(), untitledGroup(settings.language));
   const folder = await ensureFolder(parentId, folderTitle);
   const folderId = folder.id;
   const existing = new Set(
@@ -168,25 +171,25 @@ async function resolveArchiveParent(settings, createDefault) {
   if (settings.destinationFolderId) {
     const [node] = await chrome.bookmarks.get(settings.destinationFolderId).catch(() => []);
     if (!node || node.url) {
-      throw new Error('目标书签文件夹不存在或已被删除，请重新选择');
+      throw new Error(t(settings.language, 'errorDestinationMissing'));
     }
     return node;
   }
 
-  const bar = await findBookmarksBar();
+  const bar = await findBookmarksBar(settings.language);
   const title = normalizeRootFolder(settings.rootFolder);
   if (createDefault) return ensureFolder(bar.id, title);
   return findFolder(bar.id, title);
 }
 
-async function findBookmarksBar() {
+async function findBookmarksBar(language = 'en') {
   const [root] = await chrome.bookmarks.getTree();
   const children = root?.children || [];
   // folderType 比固定 ID 更稳；旧版本 Chrome 没有该字段时回退到标准 ID 1。
   const bar = children.find((node) => node.folderType === 'bookmarks-bar')
     || children.find((node) => node.id === '1')
     || children[0];
-  if (!bar) throw new Error('找不到书签栏');
+  if (!bar) throw new Error(t(language, 'errorBookmarksBar'));
   return bar;
 }
 
@@ -235,17 +238,17 @@ async function listArchives(settings) {
   return result;
 }
 
-async function openArchive(folderId) {
-  if (typeof folderId !== 'string' || !folderId) throw new Error('归档文件夹无效');
+async function openArchive(folderId, language = 'en') {
+  if (typeof folderId !== 'string' || !folderId) throw new Error(t(language, 'errorArchiveInvalid'));
   const [folder] = await chrome.bookmarks.get(folderId).catch(() => []);
-  if (!folder || folder.url) throw new Error('归档文件夹不存在');
+  if (!folder || folder.url) throw new Error(t(language, 'errorArchiveMissing'));
 
   const children = await chrome.bookmarks.getChildren(folderId);
   const urls = [...new Set(children
     .map((node) => node.url)
     .filter((url) => isBookmarkableUrl(url)))];
 
-  if (!urls.length) throw new Error('这个归档里没有可打开的页面');
+  if (!urls.length) throw new Error(t(language, 'errorArchiveEmpty'));
   const [active] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
   const windowId = active?.windowId;
   const tabIds = [];

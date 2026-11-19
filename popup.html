@@ -1,42 +1,48 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <link rel="stylesheet" href="popup.css">
 </head>
 <body>
   <header>
-    <h1>收录标签组</h1>
-    <p id="hint">选择要归档的页面，存成书签文件夹</p>
+    <div class="heading">
+      <h1 data-i18n="appTitle">Tab Group Archiver</h1>
+      <p id="hint" data-i18n="appHint">Select pages to archive into bookmarks</p>
+    </div>
+    <div id="languageSwitch" class="lang-switch" aria-label="Language">
+      <button type="button" data-lang="zh" title="中文">中</button>
+      <button type="button" data-lang="en" title="English">EN</button>
+    </div>
   </header>
 
   <main id="list"></main>
 
   <details id="options">
-    <summary>设置</summary>
-    <label><input type="checkbox" id="datePrefix"> 文件夹名带日期（YYYY-MM-DD）</label>
-    <label><input type="checkbox" id="closeAfterSave"> 归档成功后删除已收录页面</label>
+    <summary data-i18n="settingsTitle">Settings</summary>
+    <label><input type="checkbox" id="datePrefix"> <span data-i18n="datePrefix">Prefix folder with date (YYYY-MM-DD)</span></label>
+    <label><input type="checkbox" id="closeAfterSave"> <span data-i18n="closeAfterSave">Delete archived tabs after saving</span></label>
     <label class="form-row">
-      <span>归档到</span>
+      <span data-i18n="archiveTo">Archive to</span>
       <select id="destination"></select>
     </label>
     <label class="form-row">
-      <span>默认目录</span>
-      <span class="path"><span>书签栏 /</span><input type="text" id="rootFolder" spellcheck="false"></span>
+      <span data-i18n="defaultDir">Default folder</span>
+      <span class="path"><span data-i18n="bookmarksBar">Bookmarks bar /</span><input type="text" id="rootFolder" spellcheck="false"></span>
     </label>
-    <p class="option-hint">选择具体文件夹后，日期子文件夹直接建在该文件夹下；默认目录仅在「归档到」为默认时使用。</p>
+    <p class="option-hint" data-i18n="settingsHint">Choose a folder to put dated group folders directly inside it.</p>
   </details>
 
   <section id="archives-section">
     <div class="section-head">
-      <h2>历史归档</h2>
-      <button id="refreshArchives" type="button" class="link-button">刷新</button>
+      <h2 data-i18n="archivesTitle">Archive history</h2>
+      <button id="refreshArchives" type="button" class="link-button" data-i18n="refresh">Refresh</button>
     </div>
     <div id="archives"></div>
   </section>
 
   <footer>
-    <button id="saveAll" type="button">收录全部选中</button>
+    <button id="saveAll" type="button" data-i18n="archiveAll">Archive all selected</button>
   </footer>
 
   <div id="result" hidden></div>

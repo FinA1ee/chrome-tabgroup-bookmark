@@ -4,6 +4,7 @@
 
 把当前窗口的标签组按**选中页面**收录成书签文件夹，按「日期 + 组名」归档。适合用标签组管理项目、需求或调研资料，整理完标签后仍能找回链接，也可以把归档文件夹重新打开成标签组。
 
+- 界面支持中文 / English，右上角可切换
 - 纯本地、无网络请求、无第三方依赖
 - Chrome MV3，加载已解压目录即可使用
 - GitHub：[FinA1ee/chrome-tabgroup-bookmark](https://github.com/FinA1ee/chrome-tabgroup-bookmark)
@@ -80,7 +81,7 @@ node --check background.js
 ## 发布
 
 - 扩展目录就是发布目录，无需构建；商店上传时可压缩本目录，排除测试文件和仓库元数据。
-- 最新 Release：[v1.1.4](https://github.com/FinA1ee/chrome-tabgroup-bookmark/releases/tag/v1.1.4)
+- 最新 Release：[v1.1.5](https://github.com/FinA1ee/chrome-tabgroup-bookmark/releases/tag/v1.1.5)
 - 设计说明：[design.md](design.md)
 - 任务拆解：[tasks.md](tasks.md)
 - 隐私说明：[PRIVACY.md](PRIVACY.md)

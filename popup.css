@@ -17,6 +17,40 @@ body {
   overflow-y: auto;
 }
 
+header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.heading {
+  min-width: 0;
+}
+
+.lang-switch {
+  display: inline-flex;
+  flex: none;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #f8fafc;
+}
+
+.lang-switch button {
+  padding: 2px 7px;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.lang-switch button.active {
+  background: var(--accent);
+  color: #fff;
+}
+
 header h1 {
   margin: 0;
   font-size: 15px;
@@ -182,7 +216,7 @@ details label.row {
 
 details label.form-row {
   display: grid;
-  grid-template-columns: 64px minmax(0, 1fr);
+  grid-template-columns: 92px minmax(0, 1fr);
   align-items: center;
   gap: 8px;
 }

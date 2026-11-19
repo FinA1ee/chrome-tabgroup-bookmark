@@ -17,7 +17,9 @@ zip -q -r "$OUT" \
   popup.css \
   popup.js \
   lib.js \
+  i18n.js \
   icons \
+  _locales \
   PRIVACY.md
 
 shasum -a 256 "$OUT"

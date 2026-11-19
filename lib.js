@@ -1,12 +1,23 @@
 // 纯函数集合：不依赖 chrome.* API，便于在 node 下直接跑测试。
 
+import { defaultRootFolder, untitledGroup } from './i18n.js';
+
 export const UNTITLED_GROUP = '未命名组';
 export const DEFAULT_SETTINGS = {
   rootFolder: '需求归档',
   destinationFolderId: null,
   datePrefix: true,
   closeAfterSave: true,
+  language: 'en',
 };
+
+export function defaultSettingsFor(language) {
+  return {
+    ...DEFAULT_SETTINGS,
+    language,
+    rootFolder: defaultRootFolder(language),
+  };
+}
 
 export function formatDate(date = new Date()) {
   const pad = (n) => String(n).padStart(2, '0');
@@ -21,12 +32,12 @@ export function sanitizeFolderTitle(title) {
 }
 
 // 归档目录是单层文件夹，不把用户输入当成书签路径解析。
-export function normalizeRootFolder(title) {
-  return sanitizeFolderTitle(title) || DEFAULT_SETTINGS.rootFolder;
+export function normalizeRootFolder(title, fallback = DEFAULT_SETTINGS.rootFolder) {
+  return sanitizeFolderTitle(title) || fallback;
 }
 
-export function buildFolderTitle(groupTitle, withDate, date = new Date()) {
-  const name = sanitizeFolderTitle(groupTitle) || UNTITLED_GROUP;
+export function buildFolderTitle(groupTitle, withDate, date = new Date(), untitled = UNTITLED_GROUP) {
+  const name = sanitizeFolderTitle(groupTitle) || untitled;
   return withDate ? `${formatDate(date)} ${name}` : name;
 }
 

@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import {
   buildFolderTitle,
+  defaultSettingsFor,
   formatDate,
   isBookmarkableUrl,
   normalizeRootFolder,
@@ -9,6 +10,7 @@ import {
   summarize,
   UNTITLED_GROUP,
 } from './lib.js';
+import { t } from './i18n.js';
 
 assert.equal(formatDate(new Date(2026, 10, 19)), '2026-11-19');
 assert.equal(formatDate(new Date(2026, 0, 5)), '2026-01-05');
@@ -17,6 +19,11 @@ assert.equal(buildFolderTitle('主账号优化', true, new Date(2026, 10, 19)), 
 assert.equal(buildFolderTitle('主账号优化', false, new Date(2026, 10, 19)), '主账号优化');
 assert.equal(buildFolderTitle('', true, new Date(2026, 10, 19)), `2026-11-19 ${UNTITLED_GROUP}`);
 assert.equal(buildFolderTitle('  ', false), UNTITLED_GROUP);
+assert.equal(buildFolderTitle('', true, new Date(2026, 10, 19), 'Untitled group'), '2026-11-19 Untitled group');
+assert.equal(defaultSettingsFor('en').rootFolder, 'Archive');
+assert.equal(defaultSettingsFor('zh').rootFolder, '需求归档');
+assert.equal(t('en', 'archiveCount', { count: 2 }), 'Archive 2');
+assert.equal(t('zh', 'archiveCount', { count: 2 }), '收录 2');
 
 assert.equal(sanitizeFolderTitle('a/b:c'), 'a／b：c');
 assert.equal(sanitizeFolderTitle('  需求  '), '需求');
