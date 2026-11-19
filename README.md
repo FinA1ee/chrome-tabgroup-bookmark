@@ -1,6 +1,10 @@
 # Tab Group Archiver
 
-**Archive selected tabs from Chrome tab groups into dated bookmark folders — then reopen an archive as a tab group when you need it again.**
+**A Chrome extension that archives selected tabs from tab groups into dated bookmark folders — and can reopen an archive as a tab group.**
+
+[![Chrome MV3](https://img.shields.io/badge/Chrome-MV3-4285F4?logo=googlechrome&logoColor=white)](#install)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Latest release](https://img.shields.io/github/v/release/FinA1ee/chrome-tabgroup-bookmark)](https://github.com/FinA1ee/chrome-tabgroup-bookmark/releases)
 
 [中文说明](README.zh-CN.md) · [Latest release](https://github.com/FinA1ee/chrome-tabgroup-bookmark/releases/tag/v1.1.7) · [Privacy](PRIVACY.md) · [MIT License](LICENSE)
 

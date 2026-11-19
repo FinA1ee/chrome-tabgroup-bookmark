@@ -1,5 +1,8 @@
 # Tab 组收录（Chrome 扩展）
 
+[![Chrome MV3](https://img.shields.io/badge/Chrome-MV3-4285F4?logo=googlechrome&logoColor=white)](#安装)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 [English README](README.md)
 
 把当前窗口的标签组按**选中页面**收录成书签文件夹，按「日期 + 组名」归档。适合用标签组管理项目、需求或调研资料，整理完标签后仍能找回链接，也可以把归档文件夹重新打开成标签组。
