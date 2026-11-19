@@ -131,6 +131,13 @@ button:not(:disabled) {
   background: #eef3fe;
 }
 
+.save-group:disabled {
+  border-color: var(--line);
+  background: #f8fafc;
+  color: #9ca3af;
+  cursor: default;
+}
+
 .link-button {
   padding: 0;
   border: none;

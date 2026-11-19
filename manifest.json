@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Tab Group Archiver",
-  "version": "1.1.8",
+  "version": "1.1.9",
   "description": "Archive selected tabs from Chrome tab groups into dated bookmark folders, then reopen an archive as a tab group.",
   "permissions": [
     "tabs",

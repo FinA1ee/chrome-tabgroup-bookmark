@@ -1,12 +1,12 @@
 # Tab Group Archiver
 
-**A Chrome extension that archives selected tabs from tab groups into dated bookmark folders — and can reopen an archive as a tab group.**
+**A Chrome extension that archives selected tabs from tab groups into bookmark folders — and can reopen an archive as a tab group.**
 
 [![Chrome MV3](https://img.shields.io/badge/Chrome-MV3-4285F4?logo=googlechrome&logoColor=white)](#install)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Latest release](https://img.shields.io/github/v/release/FinA1ee/chrome-tabgroup-bookmark)](https://github.com/FinA1ee/chrome-tabgroup-bookmark/releases)
 
-[中文说明](README.zh-CN.md) · [Latest release](https://github.com/FinA1ee/chrome-tabgroup-bookmark/releases/tag/v1.1.8) · [Privacy](PRIVACY.md) · [MIT License](LICENSE)
+[中文说明](README.zh-CN.md) · [Latest release](https://github.com/FinA1ee/chrome-tabgroup-bookmark/releases/tag/v1.1.9) · [Privacy](PRIVACY.md) · [MIT License](LICENSE)
 
 ![Tab Group Archiver](docs/screenshots/hero.png)
 
@@ -20,13 +20,13 @@ The extension is local-only: no account, no backend, no analytics, no network re
 
 ## Features
 
-- **Pick only the tabs you need.** Expand a group and uncheck pages you do not want to keep.
-- **Dated archive folders.** The default layout is `Bookmarks bar / Archive / YYYY-MM-DD Group name`.
+- **Pick only the tabs you need.** Expand a group and check the pages to keep; nothing is selected by default.
+- **Folder names first, dates optional.** The default layout is `Bookmarks bar / Archive / Group name`; turn on date prefixes under Settings if you want chronological sorting.
 - **Choose a destination.** Use the default archive folder or any existing bookmark folder.
-- **Rename the archive folder.** Each group gets an editable folder name with a live destination preview; leave it blank to use the automatic dated name.
+- **Rename the archive folder.** Each group gets an editable folder name with a live destination preview; leave it blank to use the automatic name.
 - **Safe to repeat.** Existing folders are reused and duplicate URLs are skipped.
 - **Delete after archiving.** On by default: only successfully archived, selected tabs are closed. Unselected tabs and failed writes are kept.
-- **Reopen an archive as a tab group.** The history list can recreate the pages and group them under the original folder name.
+- **Reopen an archive as a tab group.** The history list can recreate the pages and group them. If the original group still exists in this browser session, restored pages are added back to it; otherwise a new group is created.
 - **English and Chinese UI.** Switch between 中 and EN in the popup header; the choice is saved locally.
 - **Popup-safe writes.** Bookmark writes run in the MV3 service worker, so closing the popup does not stop an archive already in progress.
 
@@ -63,7 +63,7 @@ No build step and no package installation are required. The repository itself ca
 ### Behavior notes
 
 - `file://` pages require **Allow access to file URLs** in the extension details.
-- Archive folders and dated group folders are direct children; the extension does not create multi-level paths.
+- Archive folders and group folders are direct children; the extension does not create multi-level paths.
 - Reopened groups use Chrome's default group color; the folder name is restored as the group title.
 - URL deduplication is exact: query strings and hashes are not normalized.
 - A failed bookmark write prevents automatic page deletion for that group.
@@ -111,7 +111,7 @@ Only one settings object is stored locally:
 {
   rootFolder: "Archive",
   destinationFolderId: null,
-  datePrefix: true,
+  datePrefix: false,
   closeAfterSave: true
 }
 ```
@@ -141,7 +141,7 @@ GitHub Actions runs both tests and syntax checks on every push.
 
 ## Release
 
-- [v1.1.8](https://github.com/FinA1ee/chrome-tabgroup-bookmark/releases/tag/v1.1.8)
+- [v1.1.9](https://github.com/FinA1ee/chrome-tabgroup-bookmark/releases/tag/v1.1.9)
 - Store copy and screenshot checklist: [STORE.md](STORE.md)
 - Chrome Web Store submission is pending a developer account review.
 

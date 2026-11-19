@@ -77,7 +77,7 @@ function normalizeSettings(raw) {
     destinationFolderId: typeof raw?.destinationFolderId === 'string' && raw.destinationFolderId
       ? raw.destinationFolderId
       : null,
-    datePrefix: raw?.datePrefix !== false,
+    datePrefix: raw?.datePrefix === true,
     closeAfterSave: raw?.closeAfterSave !== false,
   };
 }
@@ -167,7 +167,33 @@ async function archiveGroup(target, parentId, settings) {
     }
   }
 
+  // 记录源标签组，供本次浏览器会话中“恢复/Undo”把页面加回原组。
+  // 使用 session storage：浏览器重启后 groupId 可能复用，不能拿旧 ID 冒险。
+  await saveArchiveMeta(folderId, group).catch(() => undefined);
+
   return { groupId: target.groupId, folderId, folderTitle, added, skipped, failed, closed };
+}
+
+const ARCHIVE_META_KEY = 'archiveMeta';
+
+async function saveArchiveMeta(folderId, group) {
+  if (!chrome.storage?.session) return;
+  const stored = await chrome.storage.session.get(ARCHIVE_META_KEY);
+  const map = { ...(stored[ARCHIVE_META_KEY] || {}) };
+  map[folderId] = {
+    groupId: group.id,
+    title: group.title,
+    color: group.color,
+    archivedAt: Date.now(),
+  };
+  const entries = Object.entries(map).slice(-100);
+  await chrome.storage.session.set({ [ARCHIVE_META_KEY]: Object.fromEntries(entries) });
+}
+
+async function readArchiveMeta(folderId) {
+  if (!chrome.storage?.session) return null;
+  const stored = await chrome.storage.session.get(ARCHIVE_META_KEY);
+  return stored[ARCHIVE_META_KEY]?.[folderId] || null;
 }
 
 async function resolveArchiveParent(settings, createDefault) {
@@ -252,11 +278,35 @@ async function openArchive(folderId, language = 'en') {
     .filter((url) => isBookmarkableUrl(url)))];
 
   if (!urls.length) throw new Error(t(language, 'errorArchiveEmpty'));
-  const [active] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
-  const windowId = active?.windowId;
-  const tabIds = [];
 
-  for (const url of urls) {
+  const meta = await readArchiveMeta(folderId);
+  let targetGroup = null;
+  if (meta?.groupId) {
+    try {
+      targetGroup = await chrome.tabGroups.get(meta.groupId);
+    } catch {
+      targetGroup = null;
+    }
+  }
+
+  const [active] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+  const windowId = targetGroup?.windowId ?? active?.windowId;
+  const existingUrls = targetGroup
+    ? new Set((await chrome.tabs.query({ groupId: targetGroup.id })).map((tab) => tab.url).filter(Boolean))
+    : new Set();
+  const missingUrls = urls.filter((url) => !existingUrls.has(url));
+
+  if (targetGroup && missingUrls.length === 0) {
+    return {
+      groupId: targetGroup.id,
+      opened: 0,
+      title: targetGroup.title || folder.title,
+      restoredToGroup: true,
+    };
+  }
+
+  const tabIds = [];
+  for (const url of missingUrls) {
     const tab = await chrome.tabs.create({
       url,
       active: false,
@@ -265,11 +315,27 @@ async function openArchive(folderId, language = 'en') {
     tabIds.push(tab.id);
   }
 
-  const groupOptions = { tabIds };
-  if (windowId) groupOptions.createProperties = { windowId };
-  const groupId = await chrome.tabs.group(groupOptions);
-  await chrome.tabGroups.update(groupId, { title: String(folder.title).slice(0, 50), collapsed: false });
-  return { groupId, opened: tabIds.length, title: folder.title };
+  let groupId;
+  if (targetGroup) {
+    groupId = await chrome.tabs.group({ groupId: targetGroup.id, tabIds });
+    await chrome.tabGroups.update(groupId, { title: targetGroup.title || String(folder.title).slice(0, 50), collapsed: false });
+  } else {
+    const groupOptions = { tabIds };
+    if (windowId) groupOptions.createProperties = { windowId };
+    groupId = await chrome.tabs.group(groupOptions);
+    await chrome.tabGroups.update(groupId, {
+      title: String(folder.title).slice(0, 50),
+      collapsed: false,
+      ...(meta?.color ? { color: meta.color } : {}),
+    });
+  }
+
+  return {
+    groupId,
+    opened: tabIds.length,
+    title: targetGroup?.title || folder.title,
+    restoredToGroup: Boolean(targetGroup),
+  };
 }
 
 function bookmarkTitle(title, url) {

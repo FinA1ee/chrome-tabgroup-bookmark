@@ -43,6 +43,13 @@ globalThis.chrome = {
     id: 'test-extension',
     onMessage: { addListener: (fn) => { listener = fn; } },
   },
+  storage: {
+    session: {
+      _data: {},
+      async get(key) { return { [key]: this._data[key] }; },
+      async set(values) { Object.assign(this._data, values); },
+    },
+  },
   bookmarks: {
     getTree: async () => [{
       id: '0',
@@ -82,15 +89,22 @@ globalThis.chrome = {
       if (query?.active) return [{ id: 99, windowId: 1 }];
       return tabsByGroup.get(query?.groupId) || [];
     },
-    remove: async (ids) => { state.removed.push(...ids); },
+    remove: async (ids) => {
+      state.removed.push(...ids);
+      const selected = new Set(ids);
+      for (const [groupId, tabs] of tabsByGroup) {
+        tabsByGroup.set(groupId, tabs.filter((tab) => !selected.has(tab.id)));
+      }
+    },
     create: async ({ url, windowId, active }) => {
       const tab = { id: 100 + state.opened.length, url, windowId, active };
       state.opened.push(tab);
       return tab;
     },
-    group: async ({ tabIds }) => {
+    group: async ({ tabIds, groupId }) => {
       state.groupedTabIds = tabIds;
-      return 55;
+      state.groupTarget = groupId || null;
+      return groupId || 55;
     },
   },
 };
@@ -116,7 +130,7 @@ assert.equal(archives.folders[0].count, 1);
 const partial = await call({
   type: 'archive',
   targets: [{ groupId: 7, tabIds: [1, 3] }],
-  settings: { rootFolder: '需求归档', closeAfterSave: true },
+  settings: { rootFolder: '需求归档', datePrefix: true, closeAfterSave: true },
 });
 assert.equal(partial.ok, true);
 assert.deepEqual(
@@ -150,11 +164,13 @@ assert.equal(destination.results[0].folderTitle, 'Custom archive');
 assert.ok(state.folders.some((folder) => folder.parentId === 'dest' && folder.title === 'Custom archive'));
 assert.ok(!state.removed.includes(5));
 
-const opened = await call({ type: 'openArchive', folderId: 'folder-open' });
+const opened = await call({ type: 'openArchive', folderId: 'folder-today', language: 'en' });
 assert.equal(opened.ok, true);
-assert.equal(opened.opened, 1);
-assert.equal(opened.groupId, 55);
-assert.deepEqual(state.groupedTabIds, [100]);
-assert.deepEqual(state.groupUpdates[0], { id: 55, title: `${today} 打开组`, collapsed: false });
+assert.equal(opened.opened, 2);
+assert.equal(opened.groupId, 7);
+assert.equal(opened.restoredToGroup, true);
+assert.deepEqual(state.groupedTabIds, [100, 101]);
+assert.equal(state.groupTarget, 7);
+assert.deepEqual(state.groupUpdates[0], { id: 7, title: '测试组', collapsed: false });
 
 console.log('background.js 收录与重开断言通过');

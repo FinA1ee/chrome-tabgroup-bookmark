@@ -184,10 +184,7 @@ async function render() {
   els.list.textContent = '';
 
   for (const group of groups) {
-    selectedByGroup.set(
-      group.id,
-      new Set(group.tabs.filter((tab) => isBookmarkableUrl(pickTabUrl(tab))).map((tab) => tab.id)),
-    );
+    selectedByGroup.set(group.id, new Set());
   }
 
   if (!groups.length) {
@@ -328,7 +325,7 @@ function groupRow(group) {
     label.className = `tab-row${supported ? '' : ' disabled'}`;
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
-    checkbox.checked = supported;
+    checkbox.checked = false;
     checkbox.disabled = !supported;
     checkbox.dataset.tabId = String(tab.id);
     checkbox.dataset.unsupported = supported ? '0' : '1';
@@ -485,7 +482,9 @@ async function openArchive(folderId) {
     await render();
     await loadArchives();
     els.result.hidden = false;
-    els.result.textContent = t(language, 'openResult', { title: reply.title, count: reply.opened });
+    els.result.textContent = reply.restoredToGroup
+      ? (reply.opened ? t(language, 'restoreResult', { count: reply.opened }) : t(language, 'alreadyInGroup'))
+      : t(language, 'openResult', { title: reply.title, count: reply.opened });
   } catch (error) {
     showError(error);
   } finally {
@@ -524,7 +523,7 @@ function showResults(results) {
       const open = document.createElement('button');
       open.type = 'button';
       open.className = 'link-button';
-      open.textContent = t(language, 'openAsGroup');
+      open.textContent = t(language, item.closed ? 'restoreTabs' : 'openAsGroup');
       open.addEventListener('click', () => void openArchive(item.folderId));
       line.append(' ', open);
     }

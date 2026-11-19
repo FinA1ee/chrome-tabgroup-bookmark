@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import {
   buildFolderTitle,
+  DEFAULT_SETTINGS,
   defaultSettingsFor,
   formatDate,
   isBookmarkableUrl,
@@ -22,6 +23,7 @@ assert.equal(buildFolderTitle('  ', false), UNTITLED_GROUP);
 assert.equal(buildFolderTitle('', true, new Date(2026, 10, 19), 'Untitled group'), '2026-11-19 Untitled group');
 assert.equal(defaultSettingsFor('en').rootFolder, 'Archive');
 assert.equal(defaultSettingsFor('zh').rootFolder, '需求归档');
+assert.equal(DEFAULT_SETTINGS.datePrefix, false);
 assert.equal(t('en', 'archiveCount', { count: 2 }), 'Archive 2');
 assert.equal(t('zh', 'archiveCount', { count: 2 }), '收录 2');
 assert.equal(normalizeLanguage(undefined), 'en');

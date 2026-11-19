@@ -6,7 +6,7 @@ export const UNTITLED_GROUP = '未命名组';
 export const DEFAULT_SETTINGS = {
   rootFolder: '需求归档',
   destinationFolderId: null,
-  datePrefix: true,
+  datePrefix: false,
   closeAfterSave: true,
   language: 'en',
 };
