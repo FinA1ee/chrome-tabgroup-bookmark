@@ -1,98 +1,144 @@
-# Tab 组收录（Chrome 扩展）
+# Tab Group Archiver
 
-把当前窗口的标签组按**选中页面**收录成书签文件夹，按「日期 + 组名」归档。适合用标签组管理项目、需求或调研资料，整理完标签后仍能找回链接，也可以把归档文件夹重新打开成标签组。
+**Archive selected tabs from Chrome tab groups into dated bookmark folders — then reopen an archive as a tab group when you need it again.**
 
-- 纯本地、无网络请求、无第三方依赖
-- Chrome MV3，加载已解压目录即可使用
-- GitHub：[FinA1ee/chrome-tabgroup-bookmark](https://github.com/FinA1ee/chrome-tabgroup-bookmark)
+[中文说明](README.zh-CN.md) · [Latest release](https://github.com/FinA1ee/chrome-tabgroup-bookmark/releases/tag/v1.1.2) · [Privacy](PRIVACY.md) · [MIT License](LICENSE)
 
-## 功能
+![Tab Group Archiver](docs/screenshots/hero.png)
 
-- 展开标签组，勾选需要归档的页面，只收录选中的部分
-- 默认归档到 `书签栏 / 需求归档 / YYYY-MM-DD 组名 /`
-- 也可以选择书签栏下的任意具体文件夹作为归档父目录
-- 同名文件夹复用、同 URL 去重，重复点击安全
-- 归档成功后默认删除本次已收录的页面；未选页面保留
-- 有书签写入失败时不删除任何页面
-- 历史归档可一键重新打开为标签组，组名使用归档文件夹名
-- 设置可改：默认目录名、是否带日期前缀、是否删除已收录页面
+Chrome tab groups are great for active work but easy to lose after a project ends. Tab Group Archiver turns a group into a bookmark folder before you close it:
 
-## 安装
+```text
+Bookmarks bar / Archive / 2026-11-19 Project name
+```
 
-1. 打开 `chrome://extensions`
-2. 右上角打开「开发者模式」
-3. 点「加载已解压的扩展程序」，选择本目录
-4. 在工具栏把「Tab 组收录」固定出来
+The extension is local-only: no account, no backend, no analytics, no network requests.
 
-修改代码后，在 `chrome://extensions` 点扩展卡片上的刷新按钮，再重新打开弹窗。
+## Features
 
-## 用法
+- **Pick only the tabs you need.** Expand a group and uncheck pages you do not want to keep.
+- **Dated archive folders.** The default layout is `Bookmarks bar / Archive / YYYY-MM-DD Group name`.
+- **Choose a destination.** Use the default archive folder or any existing bookmark folder.
+- **Safe to repeat.** Existing folders are reused and duplicate URLs are skipped.
+- **Delete after archiving.** On by default: only successfully archived, selected tabs are closed. Unselected tabs and failed writes are kept.
+- **Reopen an archive as a tab group.** The history list can recreate the pages and group them under the original folder name.
+- **Popup-safe writes.** Bookmark writes run in the MV3 service worker, so closing the popup does not stop an archive already in progress.
 
-1. 点扩展图标，弹窗列出当前窗口的标签组。
-2. 点「选择页面」，取消不需要归档的页面。
-3. 选择单个组的「收录选中 N」，或底部「收录全部选中」。
-4. 到书签栏/目标文件夹检查归档；弹窗结果会显示新增、跳过、失败和是否删除页面。
-5. 需要找回时，在「历史归档」里点「以标签组打开」。
+![Select pages to archive](docs/screenshots/selection.png)
 
-## 行为说明
+## Install
 
-- 只收录 `http/https/file/ftp` 页面；`chrome://`、`chrome-extension://`、`devtools://` 等会跳过并计入「跳过」
-- 同一归档文件夹里已经存在的 URL 不会重复添加
-- 多个收录请求会排队执行，避免并发创建同名文件夹或重复书签
-- 组名为空时用「未命名组」
-- 文件夹名里的 `/ \ : * ? " < > |` 会换成全角
-- 归档目录是单层文件夹；选择具体文件夹后，日期子文件夹直接落在该文件夹下
-- 删除页面是默认行为，但只删除本次成功归档的页面；有失败时全部保留
-- 重新打开归档时，书签会变成当前窗口的新标签页并组成标签组；组颜色使用 Chrome 默认颜色
+The UI is currently in Chinese; English localization is planned.
 
-## 测试
+1. Download the latest ZIP from [Releases](https://github.com/FinA1ee/chrome-tabgroup-bookmark/releases).
+2. Unzip it anywhere.
+3. Open `chrome://extensions`.
+4. Enable **Developer mode**.
+5. Click **Load unpacked** and select the unzipped folder.
+6. Pin **Tab Group Archiver** to the toolbar.
+
+No build step and no package installation are required. The repository itself can also be loaded as an unpacked extension.
+
+## Usage
+
+1. Click the extension icon. It lists tab groups in the current window.
+2. Click **选择** (Select) to expand a group.
+3. Uncheck pages you do not want to archive.
+4. Click **收录 N** (Archive N) for one group, or **收录全部选中** (Archive all selected) for all groups.
+5. Check the bookmark folder and the result summary.
+6. To restore an archive, open **历史归档** (Archive history) and click **以标签组打开** (Open as tab group).
+
+### What gets skipped
+
+- `chrome://`, `chrome-extension://`, `devtools://` and other non-web pages
+- URLs that already exist in the target folder
+- A tab whose URL is not available yet
+
+### Behavior notes
+
+- `file://` pages require **Allow access to file URLs** in the extension details.
+- Archive folders and dated group folders are direct children; the extension does not create multi-level paths.
+- Reopened groups use Chrome's default group color; the folder name is restored as the group title.
+- URL deduplication is exact: query strings and hashes are not normalized.
+- A failed bookmark write prevents automatic page deletion for that group.
+
+## Permissions
+
+| Permission | Why it is needed |
+|---|---|
+| `tabs` | Read tab titles/URLs and create tabs when reopening an archive |
+| `tabGroups` | Read group names and create/update tab groups |
+| `bookmarks` | Create and read archive folders and bookmarks |
+| `storage` | Save archive destination and behavior settings |
+
+There are **no host permissions**, no content scripts, and no remote code.
+
+## Architecture
+
+```text
+Popup (popup.html / popup.css / popup.js)
+  ├─ lists groups and tabs
+  ├─ manages selection and settings
+  └─ sends runtime messages
+          │
+          ▼
+Service worker (background.js)
+  ├─ validates and queues archive requests
+  ├─ creates/reuses bookmark folders
+  ├─ deduplicates URLs
+  ├─ deletes only successfully archived tabs
+  └─ reopens bookmark folders as tab groups
+          │
+          ▼
+Chrome APIs: tabs · tabGroups · bookmarks · storage
+```
+
+Why a service worker? A popup is destroyed when it loses focus. Moving bookmark writes into the extension service worker makes an archive that has already started much less likely to be interrupted. The worker can still be terminated when idle, so the implementation also uses a serialized queue, URL deduplication, and a no-delete-on-failure rule.
+
+The shared pure functions live in [`lib.js`](lib.js); the design rationale is in [`design.md`](design.md).
+
+## Data and privacy
+
+Only one settings object is stored locally:
+
+```js
+{
+  rootFolder: "Archive",
+  destinationFolderId: null,
+  datePrefix: true,
+  closeAfterSave: true
+}
+```
+
+- Settings use `chrome.storage.local` and are not synced across devices.
+- Bookmarks are Chrome's native bookmark data and follow the user's Chrome Sync settings.
+- Selection state, the queue, and the current result stay in memory only.
+- No localStorage, IndexedDB, cookies, or network requests are used.
+
+See [PRIVACY.md](PRIVACY.md) for details.
+
+## Development
 
 ```sh
 npm test
-```
-
-两组测试：
-
-- `test.mjs`：命名、过滤、汇总等纯逻辑
-- `test-background.mjs`：mock `chrome.*`，覆盖部分选择、去重、目标文件夹、失败保护、自动删除和重新打开
-
-语法检查：
-
-```sh
 node --check popup.js
 node --check lib.js
 node --check background.js
 ```
 
-## 权限
+Test coverage:
 
-| 权限 | 用途 |
-|---|---|
-| `tabs` | 读取标签组页面标题/URL；重新打开归档时创建标签页 |
-| `tabGroups` | 读取标签组；重新打开归档时成组 |
-| `bookmarks` | 创建/读取归档文件夹和书签 |
-| `storage` | 保存归档位置和开关设置 |
+- `test.mjs`: date formatting, folder-name sanitization, URL filtering, summaries
+- `test-background.mjs`: mocked Chrome APIs for selection, destination folders, deduplication, failure handling, auto-delete, and reopening archives
 
-没有 `host_permissions`，不注入页面脚本，不读取网页内容，不发起网络请求。详见 [PRIVACY.md](PRIVACY.md)。
+GitHub Actions runs both tests and syntax checks on every push.
 
-## 发布
+## Release
 
-- 扩展目录就是发布目录，无需构建；商店上传时可压缩本目录，排除测试文件和仓库元数据。
-- 最新 Release：[v1.1.2](https://github.com/FinA1ee/chrome-tabgroup-bookmark/releases/tag/v1.1.2)
-- 设计说明：[design.md](design.md)
-- 任务拆解：[tasks.md](tasks.md)
-- 隐私说明：[PRIVACY.md](PRIVACY.md)
-- 商店材料：[STORE.md](STORE.md)
-- 商店截图：[01-groups.png](store/screenshots/01-groups.png)、[02-selection.png](store/screenshots/02-selection.png)
+- [v1.1.2](https://github.com/FinA1ee/chrome-tabgroup-bookmark/releases/tag/v1.1.2)
+- Store copy and screenshot checklist: [STORE.md](STORE.md)
+- Chrome Web Store submission is pending a developer account review.
 
 ## License
 
 [MIT](LICENSE)
-
-## 已知边界
-
-- 只处理当前窗口的标签组，不跨窗口合并
-- `file://` 页面需要在扩展详情里开启「允许访问文件网址」
-- 书签去重按 URL 原文比较，不合并仅 query/hash 不同的链接
-- 重新打开归档不恢复标签组颜色，只恢复组名
-- 归档目录和日期组文件夹都是直接子级，不创建多级路径
