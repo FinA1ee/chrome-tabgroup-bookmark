@@ -1,0 +1,19 @@
+README.md
+  s_46331e5435f41e::t_dcc4c646e411a7 81
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.52-trip",
+  "base_commit_sha": "c0d5c23494f972839589bc5c1a5950be2ffe6fd3",
+  "prompts": {},
+  "sessions": {
+    "s_46331e5435f41e": {
+      "agent_id": {
+        "tool": "chengxiaobang",
+        "id": "s_4tns5b9ih3f4",
+        "model": "DeepSeek-V4.1-Flash"
+      },
+      "human_author": "FinA1ee <39509457+FinA1ee@users.noreply.github.com>"
+    }
+  }
+}
