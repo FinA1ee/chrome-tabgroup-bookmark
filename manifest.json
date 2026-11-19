@@ -1,0 +1,11 @@
+{
+  "manifest_version": 3,
+  "name": "Tab 组收录",
+  "version": "1.0.0",
+  "description": "把当前窗口的标签组一键收录为书签文件夹，按「日期 + 组名」归档，方便需求结束后快速找回 PRD / Figma。",
+  "permissions": ["tabs", "tabGroups", "bookmarks", "storage"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "收录标签组到书签"
+  }
+}
