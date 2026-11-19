@@ -8,7 +8,6 @@ import {
 import {
   applyStaticI18n,
   defaultRootFolder,
-  detectLanguage,
   normalizeLanguage,
   t,
   untitledGroup,
@@ -51,7 +50,7 @@ init();
 
 async function init() {
   const stored = (await chrome.storage.local.get('settings')).settings;
-  language = normalizeLanguage(stored?.language, detectLanguage());
+  language = normalizeLanguage(stored?.language, 'en');
   settings = { ...defaultSettingsFor(language), ...(stored || {}), language };
   if (!stored?.rootFolder) settings.rootFolder = defaultRootFolder(language);
   settings.rootFolder = normalizeRootFolder(settings.rootFolder, defaultRootFolder(language));

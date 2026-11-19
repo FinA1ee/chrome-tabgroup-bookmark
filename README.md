@@ -2,7 +2,7 @@
 
 **Archive selected tabs from Chrome tab groups into dated bookmark folders — then reopen an archive as a tab group when you need it again.**
 
-[中文说明](README.zh-CN.md) · [Latest release](https://github.com/FinA1ee/chrome-tabgroup-bookmark/releases/tag/v1.1.6) · [Privacy](PRIVACY.md) · [MIT License](LICENSE)
+[中文说明](README.zh-CN.md) · [Latest release](https://github.com/FinA1ee/chrome-tabgroup-bookmark/releases/tag/v1.1.7) · [Privacy](PRIVACY.md) · [MIT License](LICENSE)
 
 ![Tab Group Archiver](docs/screenshots/hero.png)
 
@@ -29,7 +29,7 @@ The extension is local-only: no account, no backend, no analytics, no network re
 
 ## Install
 
-The popup UI supports English and Simplified Chinese; use the `中 / EN` switch in the header. The screenshots use English.
+The popup UI defaults to English and supports Simplified Chinese; use the `中 / EN` switch in the header. The screenshots use English.
 
 1. Download the latest ZIP from [Releases](https://github.com/FinA1ee/chrome-tabgroup-bookmark/releases).
 2. Unzip it anywhere.
@@ -136,7 +136,7 @@ GitHub Actions runs both tests and syntax checks on every push.
 
 ## Release
 
-- [v1.1.6](https://github.com/FinA1ee/chrome-tabgroup-bookmark/releases/tag/v1.1.6)
+- [v1.1.7](https://github.com/FinA1ee/chrome-tabgroup-bookmark/releases/tag/v1.1.7)
 - Store copy and screenshot checklist: [STORE.md](STORE.md)
 - Chrome Web Store submission is pending a developer account review.
 

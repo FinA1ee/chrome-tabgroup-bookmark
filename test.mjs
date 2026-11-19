@@ -10,7 +10,7 @@ import {
   summarize,
   UNTITLED_GROUP,
 } from './lib.js';
-import { t } from './i18n.js';
+import { normalizeLanguage, t } from './i18n.js';
 
 assert.equal(formatDate(new Date(2026, 10, 19)), '2026-11-19');
 assert.equal(formatDate(new Date(2026, 0, 5)), '2026-01-05');
@@ -24,6 +24,8 @@ assert.equal(defaultSettingsFor('en').rootFolder, 'Archive');
 assert.equal(defaultSettingsFor('zh').rootFolder, '需求归档');
 assert.equal(t('en', 'archiveCount', { count: 2 }), 'Archive 2');
 assert.equal(t('zh', 'archiveCount', { count: 2 }), '收录 2');
+assert.equal(normalizeLanguage(undefined), 'en');
+assert.equal(normalizeLanguage('fr'), 'en');
 
 assert.equal(sanitizeFolderTitle('a/b:c'), 'a／b：c');
 assert.equal(sanitizeFolderTitle('  需求  '), '需求');

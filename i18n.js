@@ -121,16 +121,7 @@ const MESSAGES = {
   },
 };
 
-export function detectLanguage() {
-  try {
-    const language = String(navigator.language || '').toLowerCase();
-    return language.startsWith('zh') ? 'zh' : 'en';
-  } catch {
-    return 'en';
-  }
-}
-
-export function normalizeLanguage(value, fallback = detectLanguage()) {
+export function normalizeLanguage(value, fallback = 'en') {
   return SUPPORTED_LANGUAGES.includes(value) ? value : fallback;
 }
 
