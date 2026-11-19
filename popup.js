@@ -170,6 +170,7 @@ function groupRow(group) {
   saveButton.type = 'button';
   saveButton.className = 'save-group';
   saveButton.dataset.groupButton = String(group.id);
+  saveButton.title = '只收录当前选中的页面';
   saveButton.addEventListener('click', () => {
     const tabIds = [...(selectedByGroup.get(group.id) || [])];
     void saveTargets([{ groupId: group.id, tabIds }]);
@@ -179,15 +180,17 @@ function groupRow(group) {
 
   const toggle = document.createElement('button');
   toggle.type = 'button';
-  toggle.className = 'link-button';
-  toggle.textContent = '选择页面';
+  toggle.className = 'link-button group-toggle';
+  toggle.textContent = '选择';
+  toggle.title = '展开页面选择';
   const tabsBox = document.createElement('div');
   tabsBox.className = 'tabs';
   tabsBox.hidden = true;
 
   toggle.addEventListener('click', () => {
     tabsBox.hidden = !tabsBox.hidden;
-    toggle.textContent = tabsBox.hidden ? '选择页面' : '收起页面';
+    toggle.textContent = tabsBox.hidden ? '选择' : '收起';
+    toggle.title = tabsBox.hidden ? '展开页面选择' : '收起页面选择';
   });
 
   const tools = document.createElement('div');
@@ -200,8 +203,9 @@ function groupRow(group) {
   clearAll.type = 'button';
   clearAll.className = 'link-button';
   clearAll.textContent = '清空';
-  tools.append(selectAll, clearAll, toggle);
-  head.append(tools);
+  tools.append(selectAll, clearAll);
+  tabsBox.append(tools);
+  head.append(toggle);
 
   for (const tab of group.tabs) {
     const url = pickTabUrl(tab);
@@ -270,7 +274,7 @@ function updateActionLabels() {
     total += count;
     const button = els.list.querySelector(`[data-group-button="${group.id}"]`);
     if (button) {
-      button.textContent = count ? `收录选中 ${count}` : '收录选中';
+      button.textContent = count ? `收录 ${count}` : '收录';
       button.disabled = busy || count === 0;
     }
   }

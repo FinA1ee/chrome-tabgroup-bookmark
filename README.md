@@ -82,6 +82,7 @@ node --check background.js
 - 任务拆解：[tasks.md](tasks.md)
 - 隐私说明：[PRIVACY.md](PRIVACY.md)
 - 商店材料：[STORE.md](STORE.md)
+- 商店截图：[01-groups.png](store/screenshots/01-groups.png)、[02-selection.png](store/screenshots/02-selection.png)
 
 ## License
 
