@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "__MSG_extensionName__",
-  "version": "1.1.5",
-  "description": "__MSG_extensionDescription__",
+  "name": "Tab Group Archiver",
+  "version": "1.1.6",
+  "description": "Archive selected tabs from Chrome tab groups into dated bookmark folders, then reopen an archive as a tab group.",
   "permissions": [
     "tabs",
     "tabGroups",
@@ -21,13 +21,12 @@
   },
   "action": {
     "default_popup": "popup.html",
-    "default_title": "__MSG_actionTitle__",
+    "default_title": "Archive tab group to bookmarks",
     "default_icon": {
       "16": "icons/icon16.png",
       "32": "icons/icon32.png",
       "48": "icons/icon48.png",
       "128": "icons/icon128.png"
     }
-  },
-  "default_locale": "en"
+  }
 }

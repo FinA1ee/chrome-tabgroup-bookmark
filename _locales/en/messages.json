@@ -1,5 +1,0 @@
-{
-  "extensionName": { "message": "Tab Group Archiver" },
-  "extensionDescription": { "message": "Archive selected tabs from Chrome tab groups into dated bookmark folders, then reopen an archive as a tab group." },
-  "actionTitle": { "message": "Archive tab group to bookmarks" }
-}
