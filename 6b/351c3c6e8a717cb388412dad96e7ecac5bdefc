@@ -1,0 +1,70 @@
+popup.js
+  s_46331e5435f41e::t_396e95ebe9dd94 36
+  s_46331e5435f41e::t_3fdd5f3d60664c 68,70,74
+  s_46331e5435f41e::t_8ac47721588453 413,425-426
+  s_46331e5435f41e::t_58a83dfe7f71c8 123,129
+  s_46331e5435f41e::t_6488bd56a5e340 529-530
+background.js
+  s_46331e5435f41e::t_76f733e7eed1c9 104
+  s_46331e5435f41e::t_0e674bfb162f5b 82
+  s_46331e5435f41e::t_437c97699c1d3a 161,163-164,166-176,179
+  s_46331e5435f41e::t_167e709be25695 187
+popup.html
+  s_46331e5435f41e::t_fc1c62ea664ad9 25-26
+lib.js
+  s_46331e5435f41e::t_40fdd297c1878c 11
+test.mjs
+  s_46331e5435f41e::t_3efdb970be66c7 28,31
+README.md
+  s_46331e5435f41e::t_c425a79140aff2 96
+  s_46331e5435f41e::t_cd648c323265ca 29
+  s_46331e5435f41e::t_8580cde4bb2181 116-117
+  s_46331e5435f41e::t_a7660931fe50d0 140,146,148
+  s_46331e5435f41e::t_e6931e86603c29 9
+README.zh-CN.md
+  s_46331e5435f41e::t_934ad827769336 90
+  s_46331e5435f41e::t_019c708e5356c2 23-24
+  s_46331e5435f41e::t_a218866ca337fc 26
+  s_46331e5435f41e::t_c9a35e45541c60 54
+  s_46331e5435f41e::t_9a18e1903caf80 66
+STORE.md
+  s_46331e5435f41e::t_fdcdc5a538ce8a 9
+  s_46331e5435f41e::t_ae794a587962b3 22
+CHANGELOG.md
+  s_46331e5435f41e::t_98cc76f1074414 3-8
+design.md
+  s_46331e5435f41e::t_8b71540e79520e 157
+  s_46331e5435f41e::t_a03ebb2c7fa8cc 298
+  s_46331e5435f41e::t_855cab45d5a6ef 308
+  s_46331e5435f41e::t_0b6b0cc67ada3d 289
+  s_46331e5435f41e::t_29ec8d75a64875 40-41
+  s_46331e5435f41e::t_e1b86ca7120182 33
+  s_46331e5435f41e::t_3ca6a02715dd6a 145-146
+i18n.js
+  s_46331e5435f41e::t_01ead1750c12f1 124
+  s_46331e5435f41e::t_383f040327ca64 57
+  s_46331e5435f41e::t_338609e65f6032 82-83
+  s_46331e5435f41e::t_b264a6d449681d 15-16
+manifest.json
+  s_46331e5435f41e::t_44c9bbdf7ed71b 4
+test-background.mjs
+  s_46331e5435f41e::t_e77d2013aa0a2b 16-20,22
+  s_46331e5435f41e::t_352b0ca6022478 156,161-162
+  s_46331e5435f41e::t_1cd4afe2fcac90 174-184
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.52-trip",
+  "base_commit_sha": "6b351c3c6e8a717cb388412dad96e7ecac5bdefc",
+  "prompts": {},
+  "sessions": {
+    "s_46331e5435f41e": {
+      "agent_id": {
+        "tool": "chengxiaobang",
+        "id": "s_4tns5b9ih3f4",
+        "model": "DeepSeek-V4.1-Flash"
+      },
+      "human_author": "FinA1ee <39509457+FinA1ee@users.noreply.github.com>"
+    }
+  }
+}
