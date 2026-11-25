@@ -30,14 +30,15 @@
 以下四项都纳入首个可用版本，可行性均为“可做”：
 
 1. **只归档组内部分页面**
-   - 每个标签组展开后显示页面复选框，默认全选，但用户可取消。
+   - 每个标签组展开后显示页面复选框，默认不选中，用户主动勾选后才可收录。
    - “收录选中”只发送选中的 tabId，不隐式归档整组。
    - 组内没有可收藏页面时按钮禁用。
 
 2. **归档后自动删除标签组**
    - 默认开启；设置里可关闭。
    - 只删除本次实际收录的页面；如果只选了部分，未选页面保留，标签组不会误删。
-   - 任意书签写入失败时不删除，避免丢页面。
+   - 可选「关闭整个标签组」：显式开启后，归档成功时删除组内所有页面（含未选页面），优先于“只删已收录页面”。
+   - 任意书签写入失败时不删除，避免丢页面；整组关闭同样要求至少一个选中页面成功归档或已存在。
 
 3. **归档文件夹重新打开为标签组**
    - 在“历史归档”里对任意归档文件夹点“以标签组打开”。
@@ -141,7 +142,8 @@ MV3 service worker 仍可能在极端情况下被浏览器终止。因此设计�
   rootFolder: "需求归档",       // 默认归档目录名，单层文件夹
   destinationFolderId: null,  // null = 使用书签栏 / rootFolder；否则直接使用该文件夹
   datePrefix: true,           // 是否使用 YYYY-MM-DD 前缀
-  closeAfterSave: true        // 归档成功后删除本次已收录页面；默认开启
+  closeAfterSave: true,       // 归档成功后删除本次已收录页面；默认开启
+  closeWholeGroup: false      // 归档成功后关闭整个标签组（含未选页面）；优先于 closeAfterSave
 }
 ```
 
@@ -152,7 +154,7 @@ MV3 service worker 仍可能在极端情况下被浏览器终止。因此设计�
 {
   type: "archive",
   targets: [{ groupId, tabIds: [1, 2, 3] }],
-  settings: { rootFolder, destinationFolderId, datePrefix, closeAfterSave }
+  settings: { rootFolder, destinationFolderId, datePrefix, closeAfterSave, closeWholeGroup }
 }
 
 // popup → service worker：文件夹列表 / 历史归档
@@ -284,6 +286,7 @@ chrome-tabgroup-bookmark/
 - 同 URL 去重
 - 单条失败继续、失败不删除已收录页面
 - 成功且开启自动删除时才删除本次选中的页面
+- 开启整组关闭时，在至少一个页面安全归档后关闭组内所有页面
 - 连续两次 archive 串行执行
 
 ### 真实 Chrome 手工验收
@@ -292,7 +295,7 @@ chrome-tabgroup-bookmark/
 2. 加载已解压扩展，收纳一组。
 3. 检查书签栏路径、文件夹名、书签标题/URL。
 4. 再点一次，确认没有重复书签。
-5. 默认开启「归档成功后删除已收录页面」，确认只删除本次选中的页面。
+5. 默认开启「归档成功后删除已收录页面」，确认只删除本次选中的页面；再开启「关闭整个标签组」，确认未选页面也关闭。
 6. 制造一个不可收藏页面（`chrome://extensions`），确认跳过计数。
 7. 关闭 popup 后观察写入是否完成（service worker 版本）。
 
@@ -302,7 +305,7 @@ chrome-tabgroup-bookmark/
 |---|---|
 | popup 关闭中断写入 | service worker + 串行队列 |
 | 并发重复 | 后台队列 + 目标文件夹去重 |
-| 关组丢页面 | 有失败不删除；只删除本次选中的 tabId |
+| 关组丢页面 | 默认只删已收录；整组关闭需显式开启，失败时保留；至少一个页面安全归档才执行 |
 | 用户输入破坏路径 | 单层文件夹净化 |
 | 商店审核认为权限过宽 | README/隐私说明逐项解释；无 host 权限 |
 | 公司信息进入开源仓库 | 发布前关键词扫描；测试域名通用化 |

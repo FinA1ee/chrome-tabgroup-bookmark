@@ -8,6 +8,7 @@ export const DEFAULT_SETTINGS = {
   destinationFolderId: null,
   datePrefix: false,
   closeAfterSave: true,
+  closeWholeGroup: false,
   language: 'en',
 };
 

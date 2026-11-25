@@ -13,8 +13,13 @@ const tabsByGroup = new Map([
   [8, [{ id: 4, title: '失败', url: 'https://fail.example' }]],
   [9, [{ id: 5, title: '目标', url: 'https://dest.example' }]],
   [10, [{ id: 6, title: '不删', url: 'https://keep.example' }]],
+  [11, [
+    { id: 11, title: '整组保留', url: 'https://whole-1.example' },
+    { id: 12, title: '整组未选', url: 'https://whole-2.example' },
+    { id: 13, title: '整组也未选', url: 'https://whole-3.example' },
+  ]],
 ]);
-const groupTitles = new Map([[7, '测试组'], [8, '失败组'], [9, '目标组'], [10, '保留组']]);
+const groupTitles = new Map([[7, '测试组'], [8, '失败组'], [9, '目标组'], [10, '保留组'], [11, '整组']]);
 const state = { folders: [], bookmarks: [], removed: [], opened: [], groupUpdates: [] };
 let listener;
 
@@ -148,11 +153,13 @@ assert.ok(!state.bookmarks.some((bookmark) => bookmark.url === 'https://b.exampl
 const failed = await call({
   type: 'archive',
   targets: [{ groupId: 8, tabIds: [4] }],
-  settings: { rootFolder: '需求归档', closeAfterSave: true },
+  settings: { rootFolder: '需求归档', closeAfterSave: true, closeWholeGroup: true },
 });
 assert.equal(failed.ok, true);
 assert.equal(failed.results[0].failed, 1);
 assert.equal(failed.results[0].closed, false);
+assert.equal(failed.results[0].closedWholeGroup, false);
+assert.ok(!state.removed.includes(4));
 
 const destination = await call({
   type: 'archive',
@@ -163,6 +170,17 @@ assert.equal(destination.ok, true);
 assert.equal(destination.results[0].folderTitle, 'Custom archive');
 assert.ok(state.folders.some((folder) => folder.parentId === 'dest' && folder.title === 'Custom archive'));
 assert.ok(!state.removed.includes(5));
+
+const wholeGroup = await call({
+  type: 'archive',
+  targets: [{ groupId: 11, tabIds: [11] }],
+  settings: { rootFolder: '需求归档', closeAfterSave: false, closeWholeGroup: true },
+});
+assert.equal(wholeGroup.ok, true);
+assert.equal(wholeGroup.results[0].added, 1);
+assert.equal(wholeGroup.results[0].closed, true);
+assert.equal(wholeGroup.results[0].closedWholeGroup, true);
+assert.ok([11, 12, 13].every((id) => state.removed.includes(id)));
 
 const opened = await call({ type: 'openArchive', folderId: 'folder-today', language: 'en' });
 assert.equal(opened.ok, true);

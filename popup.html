@@ -22,6 +22,8 @@
     <summary data-i18n="settingsTitle">Settings</summary>
     <label><input type="checkbox" id="datePrefix"> <span data-i18n="datePrefix">Prefix folder with date (YYYY-MM-DD)</span></label>
     <label><input type="checkbox" id="closeAfterSave"> <span data-i18n="closeAfterSave">Delete archived tabs after saving</span></label>
+    <label><input type="checkbox" id="closeWholeGroup"> <span data-i18n="closeWholeGroup">Close the whole tab group after saving (including unselected pages)</span></label>
+    <p class="option-hint" data-i18n="closeWholeGroupHint">Takes precedence over the option above. Unselected pages are closed without being added to bookmarks.</p>
     <label class="form-row">
       <span data-i18n="archiveTo">Archive to</span>
       <select id="destination"></select>

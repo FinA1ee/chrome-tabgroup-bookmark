@@ -79,6 +79,7 @@ function normalizeSettings(raw) {
       : null,
     datePrefix: raw?.datePrefix === true,
     closeAfterSave: raw?.closeAfterSave !== false,
+    closeWholeGroup: raw?.closeWholeGroup === true,
   };
 }
 
@@ -100,6 +101,7 @@ async function archiveGroups(targets, settings) {
         skipped: 0,
         failed: 1,
         closed: false,
+        closedWholeGroup: false,
         error: textOf(error),
       });
     }
@@ -156,14 +158,25 @@ async function archiveGroup(target, parentId, settings) {
     }
   }
 
-  // 有失败时不删除任何页面，避免用户丢掉还没来得及确认的页面。
+  // 有失败时不删除任何页面；整组关闭也必须建立在至少一个页面已安全归档/已存在的基础上。
   let closed = false;
-  if (settings.closeAfterSave && failed === 0 && archivedTabIds.length > 0) {
+  let closedWholeGroup = false;
+  if (failed === 0 && archivedTabIds.length > 0) {
     try {
-      await chrome.tabs.remove(archivedTabIds);
-      closed = true;
+      if (settings.closeWholeGroup) {
+        const groupTabs = await chrome.tabs.query({ groupId: target.groupId });
+        if (groupTabs.length) {
+          await chrome.tabs.remove(groupTabs.map((tab) => tab.id));
+          closed = true;
+          closedWholeGroup = true;
+        }
+      } else if (settings.closeAfterSave) {
+        await chrome.tabs.remove(archivedTabIds);
+        closed = true;
+      }
     } catch {
       closed = false;
+      closedWholeGroup = false;
     }
   }
 
@@ -171,7 +184,7 @@ async function archiveGroup(target, parentId, settings) {
   // 使用 session storage：浏览器重启后 groupId 可能复用，不能拿旧 ID 冒险。
   await saveArchiveMeta(folderId, group).catch(() => undefined);
 
-  return { groupId: target.groupId, folderId, folderTitle, added, skipped, failed, closed };
+  return { groupId: target.groupId, folderId, folderTitle, added, skipped, failed, closed, closedWholeGroup };
 }
 
 const ARCHIVE_META_KEY = 'archiveMeta';

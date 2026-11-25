@@ -25,8 +25,10 @@ assert.equal(defaultSettingsFor('en').rootFolder, 'Archive');
 assert.equal(defaultSettingsFor('zh').rootFolder, '需求归档');
 assert.equal(DEFAULT_SETTINGS.datePrefix, false);
 assert.equal(DEFAULT_SETTINGS.closeAfterSave, true);
+assert.equal(DEFAULT_SETTINGS.closeWholeGroup, false);
 assert.equal(t('en', 'archiveCount', { count: 2 }), 'Archive 2');
 assert.equal(t('zh', 'archiveCount', { count: 2 }), '收录 2');
+assert.equal(t('zh', 'deletedWholeGroup'), '已关闭整个标签组');
 assert.equal(normalizeLanguage(undefined), 'en');
 assert.equal(normalizeLanguage('fr'), 'en');
 

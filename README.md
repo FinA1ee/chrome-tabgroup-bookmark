@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Latest release](https://img.shields.io/github/v/release/FinA1ee/chrome-tabgroup-bookmark)](https://github.com/FinA1ee/chrome-tabgroup-bookmark/releases)
 
-[中文说明](README.zh-CN.md) · [Latest release](https://github.com/FinA1ee/chrome-tabgroup-bookmark/releases/tag/v1.2.0) · [Privacy](PRIVACY.md) · [MIT License](LICENSE)
+[中文说明](README.zh-CN.md) · [Latest release](https://github.com/FinA1ee/chrome-tabgroup-bookmark/releases/tag/v1.3.0) · [Privacy](PRIVACY.md) · [MIT License](LICENSE)
 
 ![Tab Group Archiver](docs/screenshots/hero.png)
 
@@ -26,6 +26,7 @@ The extension is local-only: no account, no backend, no analytics, no network re
 - **Rename the archive folder.** Each group gets an editable folder name with a live destination preview; leave it blank to use the automatic name.
 - **Safe to repeat.** Existing folders are reused and duplicate URLs are skipped.
 - **Delete after archiving.** On by default: only successfully archived, selected tabs are closed. Unselected tabs and failed writes are kept.
+- **Close the whole group (optional).** A separate setting closes every tab in the group after a successful archive, including unselected pages. It takes precedence over the selected-tabs option; failed writes keep the group open.
 - **Reopen an archive as a tab group.** The history list can recreate the pages and group them. If the original group still exists in this browser session, restored pages are added back to it; otherwise a new group is created.
 - **English and Chinese UI.** Switch between 中 and EN in the popup header; the choice is saved locally.
 - **Popup-safe writes.** Bookmark writes run in the MV3 service worker, so closing the popup does not stop an archive already in progress.
@@ -92,7 +93,7 @@ Service worker (background.js)
   ├─ validates and queues archive requests
   ├─ creates/reuses bookmark folders
   ├─ deduplicates URLs
-  ├─ deletes only successfully archived tabs
+  ├─ deletes archived tabs, or the whole group when enabled
   └─ reopens bookmark folders as tab groups
           │
           ▼
@@ -112,7 +113,8 @@ Only one settings object is stored locally:
   rootFolder: "Archive",
   destinationFolderId: null,
   datePrefix: false,
-  closeAfterSave: true
+  closeAfterSave: true,
+  closeWholeGroup: false
 }
 ```
 
@@ -135,15 +137,15 @@ node --check background.js
 Test coverage:
 
 - `test.mjs`: date formatting, folder-name sanitization, URL filtering, summaries
-- `test-background.mjs`: mocked Chrome APIs for selection, destination folders, deduplication, failure handling, auto-delete, and reopening archives
+- `test-background.mjs`: mocked Chrome APIs for selection, destination folders, deduplication, failure handling, auto-delete, whole-group close, and reopening archives
 
 GitHub Actions runs both tests and syntax checks on every push.
 
 ## Release
 
-- [v1.2.0](https://github.com/FinA1ee/chrome-tabgroup-bookmark/releases/tag/v1.2.0)
+- [v1.3.0](https://github.com/FinA1ee/chrome-tabgroup-bookmark/releases/tag/v1.3.0)
 - Store copy and screenshot checklist: [STORE.md](STORE.md)
-- Chrome Web Store submission is pending a developer account review.
+- Live on the Chrome Web Store: [Tab Group Archiver](https://chromewebstore.google.com/detail/mbckmoklgjjchcpmncnppffgkggbpmmf)
 
 ## License
 

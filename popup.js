@@ -33,6 +33,7 @@ const els = {
   saveAll: document.getElementById('saveAll'),
   datePrefix: document.getElementById('datePrefix'),
   closeAfterSave: document.getElementById('closeAfterSave'),
+  closeWholeGroup: document.getElementById('closeWholeGroup'),
   rootFolder: document.getElementById('rootFolder'),
   destination: document.getElementById('destination'),
   archives: document.getElementById('archives'),
@@ -64,10 +65,13 @@ async function init() {
   applyStaticI18n(language);
   els.datePrefix.checked = settings.datePrefix;
   els.closeAfterSave.checked = settings.closeAfterSave;
+  els.closeWholeGroup.checked = settings.closeWholeGroup;
   els.rootFolder.value = settings.rootFolder;
+  syncCloseOptions();
 
   els.datePrefix.addEventListener('change', persistSettings);
   els.closeAfterSave.addEventListener('change', persistSettings);
+  els.closeWholeGroup.addEventListener('change', persistSettings);
   els.rootFolder.addEventListener('change', persistSettings);
   els.destination.addEventListener('change', persistSettings);
   els.refreshArchives.addEventListener('click', () => void loadArchives());
@@ -116,11 +120,13 @@ async function persistSettings() {
     ...settings,
     datePrefix: els.datePrefix.checked,
     closeAfterSave: els.closeAfterSave.checked,
+    closeWholeGroup: els.closeWholeGroup.checked,
     rootFolder: normalizeRootFolder(els.rootFolder.value, defaultRootFolder(language)),
     destinationFolderId,
     language,
   };
   els.rootFolder.value = settings.rootFolder;
+  syncCloseOptions();
   refreshFolderNames();
   if (els.destination.options[0]) {
     els.destination.options[0].text = t(language, 'defaultDestination', { folder: settings.rootFolder });
@@ -404,6 +410,7 @@ function setBusy(value) {
   for (const el of document.querySelectorAll('button, input, select')) {
     el.disabled = value || (el.matches?.('input[data-unsupported="1"]'));
   }
+  syncCloseOptions();
   if (value) {
     els.saveAll.textContent = t(language, 'saving');
     return;
@@ -413,6 +420,10 @@ function setBusy(value) {
     const save = row.querySelector('.save-group');
     if (save) save.disabled = !row.querySelector('input[data-tab-id]:checked');
   }
+}
+
+function syncCloseOptions() {
+  els.closeAfterSave.disabled = busy || els.closeWholeGroup.checked;
 }
 
 async function saveTargets(targets) {
@@ -515,7 +526,8 @@ function showResults(results) {
       t(language, 'skippedShort', { count: item.skipped }),
     ];
     if (item.failed) details.push(t(language, 'failedShort', { count: item.failed }));
-    if (item.closed) details.push(t(language, 'deleted'));
+    if (item.closedWholeGroup) details.push(t(language, 'deletedWholeGroup'));
+    else if (item.closed) details.push(t(language, 'deleted'));
     if (item.error) details.push(`${t(language, 'errorLabel')}: ${item.error}`);
     const title = item.folderTitle || t(language, 'groupFallback', { id: item.groupId });
     line.textContent = `· ${title}: ${details.join(separator)}`;
